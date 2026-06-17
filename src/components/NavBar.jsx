@@ -64,7 +64,7 @@ function NavBar() {
               alt="Fable Logo"
               width={32}
               height={32}
-              className="rounded-full object-contain"
+              className=" rounded-full object-contain"
               onError={(e) => {
                 // Fallback if image asset is missing
                 e.target.style.display = "none";
@@ -136,12 +136,9 @@ function NavBar() {
               </>
             )}
             <li>
-              <Link
-                href="/pricing"
-                className="hover:text-white transition-colors"
-              >
-                <CircleDollar />
-              </Link>
+             <NavLink href="/pricing">
+                <CircleDollar width={20} height={20} />
+              </NavLink>
             </li>
           </ul>
 
@@ -197,17 +194,8 @@ function NavBar() {
               </NavLink>
             </li>
 
-            <li>
-              <NavLink href="/pricing">
-                <CircleDollar width={20} height={20} />
-              </NavLink>
-            </li>
 
-            <li>
-              <NavLink href="/pricing">
-                <CircleDollar width={20} height={20} />
-              </NavLink>
-            </li>
+            
             {user.isLoggedIn && (
               <>
                 {user.role === "reader" && (
@@ -243,9 +231,9 @@ function NavBar() {
               </>
             )}
             <li>
-              <Link href="/pricing" className="block py-2 hover:text-white">
-                <CircleDollar />
-              </Link>
+            <NavLink href="/pricing">
+                <CircleDollar width={20} height={20} />
+              </NavLink>
             </li>
 
             <hr className="my-2 border-zinc-800" />
