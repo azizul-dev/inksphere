@@ -49,13 +49,9 @@ function FooterLinkColumn({ title, links }) {
             <Link
               href={href}
               className="group flex items-center gap-2 text-sm  transition-colors duration-200 hover:text-white/90"
-
             >
               {/* animated underline accent */}
-              <span
-                className="block h-px w-0 bg-linear-to-r from-cyan-400 to-blue-600 transition-all duration-200 group-hover:w-3"
-
-              />
+              <span className="block h-px w-0 bg-linear-to-r from-cyan-400 to-blue-600 transition-all duration-200 group-hover:w-3" />
               {label}
             </Link>
           </li>
@@ -174,10 +170,10 @@ export default function Footer() {
 
           {/* ── Newsletter column ── */}
           <div>
-            <p className="text-[11px] font-semibold tracking-[1.2px] uppercase text-white/30 mb-5">
+            <p className="text-[11px] font-semibold tracking-[1.2px] uppercase  mb-5">
               Newsletter
             </p>
-            <p className="text-[13px] text-white/40 leading-relaxed mb-4">
+            <p className="text-[13px] leading-relaxed mb-4">
               Get the latest ebooks and author updates delivered to your inbox.
             </p>
 
@@ -194,7 +190,7 @@ export default function Footer() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleSubscribe()}
-                  className="w-full bg-white/[0.05] border border-white/10 hover:border-cyan-400/30 focus:border-cyan-400/40 focus:outline-none rounded-lg px-3 py-2 text-sm text-white/80 placeholder:text-white/30 transition-colors duration-200"
+                  className="w-full border hover:border-cyan-400/30 focus:border-cyan-400/40 focus:outline-none rounded-lg px-3 py-2 text-sm  transition-colors duration-200"
                 />
                 <Button
                   onPress={handleSubscribe}
@@ -235,7 +231,7 @@ export default function Footer() {
               <Link
                 key={item}
                 href={`/${item.toLowerCase()}`}
-                className="text-[13px]  hover:text-white/70 transition-colors duration-200"
+                className="text-[13px]  transition-colors duration-200"
               >
                 {item}
               </Link>
