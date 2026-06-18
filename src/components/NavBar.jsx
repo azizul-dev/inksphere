@@ -152,7 +152,7 @@ function NavBar() {
                 {/* Thin vertical spacer line matches your mockup image */}
                 <div className="h-4 w-px bg-zinc-800" />
                 <Link
-                  href="/auth/signup"
+                  href="/auth/signin"
                   className="font-medium text-indigo-400 hover:text-indigo-300 transition-colors"
                 >
                   Sign In
@@ -242,7 +242,7 @@ function NavBar() {
             {!user.isLoggedIn ? (
               <div className="flex flex-col gap-2 pt-2">
                 <Link
-                  href="/auth/signup"
+                  href="/auth/signin"
                   className="block py-2 text-center font-medium text-indigo-400"
                 >
                   Sign In

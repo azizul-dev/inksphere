@@ -8,35 +8,34 @@ import { useMotionValue, useTransform } from "framer-motion";
 import { useSpring } from "framer-motion";
 
 import {
-  Person,
   Envelope,
   Lock,
   Eye,
   EyeSlash,
   StarFill,
 } from "@gravity-ui/icons";
-import { signUp } from "@/lib/auth-client";
+import { signIn } from "@/lib/auth-client"; // Assuming your library uses signIn
 import { toast } from "react-toastify";
 
-export default function SignUpPage() {
+export default function SignInPage() {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
   const rotateX = useSpring(
-  useTransform(mouseY, [-100, 100], [3, -3]),
-  {
-    stiffness: 180,
-    damping: 18,
-  }
-);
+    useTransform(mouseY, [-100, 100], [3, -3]),
+    {
+      stiffness: 180,
+      damping: 18,
+    }
+  );
 
-const rotateY = useSpring(
-  useTransform(mouseX, [-100, 100], [-3, 3]),
-  {
-    stiffness: 180,
-    damping: 18,
-  }
-);
+  const rotateY = useSpring(
+    useTransform(mouseX, [-100, 100], [-3, 3]),
+    {
+      stiffness: 180,
+      damping: 18,
+    }
+  );
 
   const handleMouseMove = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -54,29 +53,19 @@ const rotateY = useSpring(
   };
 
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [form, setForm] = useState({
-    name: "",
     email: "",
     password: "",
-    confirmPassword: "",
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
   const validate = () => {
     const newErrors = {};
-    if (!form.name.trim()) newErrors.name = "Name is required";
     if (!form.email.trim()) newErrors.email = "Email is required";
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
       newErrors.email = "Please enter a valid email";
     if (!form.password) newErrors.password = "Password is required";
-    else if (form.password.length < 6)
-      newErrors.password = "Must be at least 6 characters";
-    if (!form.confirmPassword)
-      newErrors.confirmPassword = "Please confirm your password";
-    else if (form.password !== form.confirmPassword)
-      newErrors.confirmPassword = "Passwords do not match";
     return newErrors;
   };
 
@@ -93,33 +82,23 @@ const rotateY = useSpring(
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-
       toast.warning("Please fill all fields correctly");
-
       return;
     }
 
     setIsLoading(true);
 
     try {
-      const result = await signUp.email({
+      const result = await signIn.email({
         email: form.email,
         password: form.password,
-        name: form.name,
         callbackURL: "/",
       });
-      console.log("SIGNUP RESULT:", result);
 
-      toast.success("🎉 Account created successfully!");
-
-      setForm({
-        name: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-      });
+      toast.success("Welcome back! 👋");
+      // Add redirection logic here if needed (e.g., router.push("/dashboard"))
     } catch (error) {
-      toast.error(error.message || "Failed to create account");
+      toast.error(error.message || "Failed to sign in. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -127,8 +106,8 @@ const rotateY = useSpring(
 
   return (
     <div className="flex-1 flex items-center justify-center">
-      <main className=" flex-1 flex items-center justify-center py-10 sm:py-16">
-        {/* ── Right: Sign-up card ── */}
+      <main className="flex-1 flex items-center justify-center py-10 sm:py-16">
+        {/* ── Sign-in card ── */}
         <motion.div
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
@@ -158,10 +137,10 @@ const rotateY = useSpring(
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="text-2xl font-bold text-gray-900">
-                Create Account
+                Welcome Back
               </h2>
               <p className="text-sm text-gray-400 mt-0.5">
-                Free forever. No credit card needed.
+                Sign in to manage your account.
               </p>
             </div>
             <div className="flex flex-col items-end bg-amber-50 border border-amber-200 rounded-xl px-3 py-2">
@@ -176,34 +155,6 @@ const rotateY = useSpring(
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-            {/* Name */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                Full Name
-              </label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                  <Person className="w-4 h-4" />
-                </span>
-                <input
-                  type="text"
-                  name="name"
-                  value={form.name}
-                  onChange={handleChange}
-                  placeholder="Enter your full name"
-                  className={`w-full pl-10 pr-4 py-3 rounded-xl border text-sm outline-none transition
-                      ${
-                        errors.name
-                          ? "border-red-400 bg-red-50 focus:border-red-500"
-                          : "border-gray-200 bg-gray-50 focus:border-amber-400 focus:bg-white"
-                      }`}
-                />
-              </div>
-              {errors.name && (
-                <p className="text-xs text-red-500 mt-1">{errors.name}</p>
-              )}
-            </div>
-
             {/* Email */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1.5">
@@ -234,9 +185,17 @@ const rotateY = useSpring(
 
             {/* Password */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                Password
-              </label>
+              <div className="flex justify-between items-center mb-1.5">
+                <label className="block text-sm font-medium text-gray-700">
+                  Password
+                </label>
+                <Link
+                  href="/forgot-password"
+                  className="text-xs text-amber-500 hover:text-amber-600 font-medium transition"
+                >
+                  Forgot password?
+                </Link>
+              </div>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                   <Lock className="w-4 h-4" />
@@ -246,7 +205,7 @@ const rotateY = useSpring(
                   name="password"
                   value={form.password}
                   onChange={handleChange}
-                  placeholder="At least 6 characters"
+                  placeholder="Enter your password"
                   className={`w-full pl-10 pr-11 py-3 rounded-xl border text-sm outline-none transition
                       ${
                         errors.password
@@ -271,47 +230,6 @@ const rotateY = useSpring(
               )}
             </div>
 
-            {/* Confirm Password */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                Confirm Password
-              </label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                  <Lock className="w-4 h-4" />
-                </span>
-                <input
-                  type={showConfirmPassword ? "text" : "password"}
-                  name="confirmPassword"
-                  value={form.confirmPassword}
-                  onChange={handleChange}
-                  placeholder="Re-enter your password"
-                  className={`w-full pl-10 pr-11 py-3 rounded-xl border text-sm outline-none transition
-                      ${
-                        errors.confirmPassword
-                          ? "border-red-400 bg-red-50 focus:border-red-500"
-                          : "border-gray-200 bg-gray-50 focus:border-amber-400 focus:bg-white"
-                      }`}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword((v) => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
-                >
-                  {showConfirmPassword ? (
-                    <EyeSlash className="w-4 h-4" />
-                  ) : (
-                    <Eye className="w-4 h-4" />
-                  )}
-                </button>
-              </div>
-              {errors.confirmPassword && (
-                <p className="text-xs text-red-500 mt-1">
-                  {errors.confirmPassword}
-                </p>
-              )}
-            </div>
-
             {/* Submit */}
             <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
               <Button
@@ -319,7 +237,7 @@ const rotateY = useSpring(
                 isLoading={isLoading}
                 className="w-full py-3 rounded-xl text-white font-semibold text-sm bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 shadow-md shadow-amber-200"
               >
-                {isLoading ? "Creating account..." : "Create Account →"}
+                {isLoading ? "Signing in..." : "Sign In →"}
               </Button>
             </motion.div>
           </form>
@@ -333,18 +251,17 @@ const rotateY = useSpring(
 
           {/* Google */}
           <button className="w-full flex items-center justify-center gap-2 border border-gray-200 rounded-xl py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition">
-            {/* <LogoGoogle className="w-4 h-4" /> */}
             Continue with Google
           </button>
 
-          {/* Sign in link */}
+          {/* Sign up link */}
           <p className="text-center text-sm text-gray-500 mt-6">
-            Already have an account?{" "}
+            Do not have an account?{" "}
             <Link
-              href="/auth/signin"
+              href="/auth/signup"
               className="text-amber-500 font-semibold hover:text-amber-600 transition"
             >
-              Sign In
+              Sign Up
             </Link>
           </p>
         </motion.div>
