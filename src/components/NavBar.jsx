@@ -115,10 +115,10 @@ function NavBar() {
                 {user.role === "reader" && (
                   <li>
                     <Link
-                      href="/dashboard/library"
+                      href="/dashboard/writer"
                       className="hover:text-white transition-colors"
                     >
-                      My Library
+                      Dashboard
                     </Link>
                   </li>
                 )}
@@ -213,10 +213,10 @@ function NavBar() {
                 {user.role === "reader" && (
                   <li>
                     <Link
-                      href="/dashboard/library"
+                      href="/dashboard/writer"
                       className="block py-2 hover:text-white"
                     >
-                      My Library
+                     Dashboard
                     </Link>
                   </li>
                 )}
