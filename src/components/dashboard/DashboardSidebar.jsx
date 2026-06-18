@@ -1,6 +1,6 @@
 import {
   LayoutSplitSideContentLeft,
-  Bell,
+  CirclePlus,
   Bookmark,
   House,
   Magnifier,
@@ -13,6 +13,7 @@ export function DashboardSidebar() {
     { icon: House, label: "Dashboard" },
     { icon: Magnifier, label: "Purchased Books" },
     { icon: Bookmark, label: "Bookmarked Books" },
+    { icon: CirclePlus, label: "Add a Book" },
     { icon: Person, label: "Profile" },
     
   ];
