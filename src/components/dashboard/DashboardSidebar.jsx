@@ -1,8 +1,7 @@
 import {
   LayoutSplitSideContentLeft,
   Bell,
-  Envelope,
-  Gear,
+  Bookmark,
   House,
   Magnifier,
   Person,
@@ -11,12 +10,11 @@ import { Button, Drawer } from "@heroui/react";
 
 export function DashboardSidebar() {
   const navItems = [
-    { icon: House, label: "Home" },
-    { icon: Magnifier, label: "Search" },
-    { icon: Bell, label: "Notifications" },
-    { icon: Envelope, label: "Messages" },
+    { icon: House, label: "Dashboard" },
+    { icon: Magnifier, label: "Purchased Books" },
+    { icon: Bookmark, label: "Bookmarked Books" },
     { icon: Person, label: "Profile" },
-    { icon: Gear, label: "Settings" },
+    
   ];
 
   const navContent = (
@@ -36,13 +34,12 @@ export function DashboardSidebar() {
 
   return (
     <>
-    <aside className=" hidden w-64 shrink-0 border-r border-default p-4 lg:block">
+    <aside className="hidden lg:flex lg:w-64 xl:w-72 shrink-0 border-r bg-white p-4">
         {navContent}
     </aside>
       <Drawer>
         <Button className="lg:hidden" variant="secondary">
           <LayoutSplitSideContentLeft />
-          Sidebar
         </Button>
         <Drawer.Backdrop>
           <Drawer.Content placement="left">
