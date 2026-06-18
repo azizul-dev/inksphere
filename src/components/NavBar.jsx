@@ -17,7 +17,7 @@ function NavBar() {
   });
 
   return (
-    <nav className="sticky top-0 z-40 w-full border-b border-zinc-800 bg-black/70 text-white backdrop-blur-lg">
+    <nav className="sticky top-0 z-40 w-full border-b border-cyan-800 text-white backdrop-blur-lg">
       <header className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
         {/* LEFT SIDE: Logo stays fixed here */}
         <div className="flex items-center gap-4">
@@ -59,18 +59,21 @@ function NavBar() {
             {/* Replace src="/logo.png" with your actual logo asset path.
               If using Next.js <Image /> component, capitalize it to <Image ... />
             */}
-            <Image
-              src="/images/logoa.png"
-              alt="Fable Logo"
-              width={32}
-              height={32}
-              className=" rounded-full object-contain"
-              onError={(e) => {
-                // Fallback if image asset is missing
-                e.target.style.display = "none";
-                e.target.nextSibling.style.display = "flex";
+            <div
+              className="w-10 h-10 rounded-[10px] flex items-center justify-center shadow-[0_0_20px_rgba(34,211,238,.25)]"
+              style={{
+                background:
+                  "linear-gradient(135deg,#facc15,#f97316,#22d3ee,#2563eb)",
               }}
-            />
+            >
+              <Image
+                src="/images/logoa.png"
+                alt="InkSphere Logo"
+                width={40}
+                height={40}
+                className="w-full rounded-full h-full object-contain"
+              />
+            </div>
             {/* Fallback visual container if image is missing */}
             <span className="font-bold text-xl">
               <span className="bg-linear-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
@@ -136,7 +139,7 @@ function NavBar() {
               </>
             )}
             <li>
-             <NavLink href="/pricing">
+              <NavLink href="/pricing">
                 <CircleDollar width={20} height={20} />
               </NavLink>
             </li>
@@ -163,7 +166,7 @@ function NavBar() {
               </>
             ) : (
               <div className="flex items-center gap-4">
-                <span className="rounded bg-zinc-800 px-2 py-1 text-xs uppercase text-zinc-400">
+                <span className="rounded px-2 py-1 text-xs uppercase text-zinc-400">
                   {user.role}
                 </span>
                 <button
@@ -180,7 +183,7 @@ function NavBar() {
 
       {/* Mobile Menu Dropdown */}
       {isMenuOpen && (
-        <div className="border-t border-zinc-800 bg-black/95 md:hidden">
+        <div className="border-t border-y-lime-500 md:hidden">
           <ul className="flex flex-col gap-2 p-4 text-sm font-medium text-zinc-400">
             <li>
               <NavLink href="/">
@@ -194,8 +197,6 @@ function NavBar() {
               </NavLink>
             </li>
 
-
-            
             {user.isLoggedIn && (
               <>
                 {user.role === "reader" && (
@@ -231,7 +232,7 @@ function NavBar() {
               </>
             )}
             <li>
-            <NavLink href="/pricing">
+              <NavLink href="/pricing">
                 <CircleDollar width={20} height={20} />
               </NavLink>
             </li>
