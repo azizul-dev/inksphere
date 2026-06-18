@@ -4,6 +4,8 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { toast } from "react-toastify";
+import { createNewBook } from "@/lib/actions/book";
+import { redirect } from "next/navigation";
 
 export default function AddNewBooks() {
   const [formData, setFormData] = useState({
@@ -25,7 +27,7 @@ export default function AddNewBooks() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const { title, genre, price, coverImage, shortDescription, content } =
@@ -44,8 +46,15 @@ export default function AddNewBooks() {
     }
 
     console.log("BOOK DATA:", formData);
+    
 
-    toast.success("Book Published Successfully 🚀");
+    const res = await createNewBook(formData);
+    if(res.insertedId){
+      toast.success("Book Published Successfully 🚀");
+      redirect('/dashboard/writer')
+    }
+
+    
 
     setFormData({
       title: "",
@@ -56,6 +65,8 @@ export default function AddNewBooks() {
       content: "",
       status: "draft",
     });
+
+    
   };
 
   return (
