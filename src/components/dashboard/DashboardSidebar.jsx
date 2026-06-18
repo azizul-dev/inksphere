@@ -24,6 +24,11 @@ export function DashboardSidebar() {
       href: "/dashboard/writer",
     },
     {
+      icon: House,
+      label: "Book",
+      href: "/dashboard/writer/manage",
+    },
+    {
       icon: Magnifier,
       label: "Purchased Books",
       href: "/dashboard/purchased-books",
@@ -36,7 +41,7 @@ export function DashboardSidebar() {
     {
       icon: CirclePlus,
       label: "Add a Book",
-      href: "/dashboard/writer/new",
+      href: "/dashboard/writer/manage/new",
     },
     {
       icon: Person,

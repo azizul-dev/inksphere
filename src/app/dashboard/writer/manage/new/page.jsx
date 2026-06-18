@@ -6,8 +6,10 @@ import Image from "next/image";
 import { toast } from "react-toastify";
 import { createNewBook } from "@/lib/actions/book";
 import { redirect } from "next/navigation";
+import { useSession } from "@/lib/auth-client";
 
 export default function AddNewBooks() {
+  const { data: session } = useSession();
   const [formData, setFormData] = useState({
     title: "",
     genre: "",
@@ -27,47 +29,52 @@ export default function AddNewBooks() {
     }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    const { title, genre, price, coverImage, shortDescription, content } =
-      formData;
+  const { title, genre, price, coverImage, shortDescription, content } =
+    formData;
 
-    if (
-      !title.trim() ||
-      !genre.trim() ||
-      !price ||
-      !coverImage.trim() ||
-      !shortDescription.trim() ||
-      !content.trim()
-    ) {
-      toast.error("All fields are required ❌");
-      return;
-    }
+  if (
+    !title.trim() ||
+    !genre.trim() ||
+    !price ||
+    !coverImage.trim() ||
+    !shortDescription.trim() ||
+    !content.trim()
+  ) {
+    toast.error("All fields are required ❌");
+    return;
+  }
 
-    console.log("BOOK DATA:", formData);
-    
-
-    const res = await createNewBook(formData);
-    if(res.insertedId){
-      toast.success("Book Published Successfully 🚀");
-      redirect('/dashboard/writer')
-    }
-
-    
-
-    setFormData({
-      title: "",
-      genre: "",
-      price: "",
-      coverImage: "",
-      shortDescription: "",
-      content: "",
-      status: "draft",
-    });
-
-    
+  const bookData = {
+    ...formData,
+    writerId: session?.user?.id,
   };
+
+  try {
+    const res = await createNewBook(bookData);
+
+    if (res.insertedId) {
+      toast.success("Book Published Successfully 🚀");
+
+      setFormData({
+        title: "",
+        genre: "",
+        price: "",
+        coverImage: "",
+        shortDescription: "",
+        content: "",
+        status: "draft",
+      });
+
+      redirect("/dashboard/writer")
+    }
+  } catch (error) {
+    console.log(error);
+    
+  }
+};
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-6 md:px-6 lg:px-8">
