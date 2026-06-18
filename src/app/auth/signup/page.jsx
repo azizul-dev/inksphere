@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Button } from "@heroui/react";
 import { useMotionValue, useTransform } from "framer-motion";
 import { useSpring } from "framer-motion";
+import { Description, Label, Radio, RadioGroup } from "@heroui/react";
 
 import {
   Person,
@@ -17,26 +18,21 @@ import {
 } from "@gravity-ui/icons";
 import { signUp } from "@/lib/auth-client";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 export default function SignUpPage() {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  const rotateX = useSpring(
-  useTransform(mouseY, [-100, 100], [3, -3]),
-  {
+  const rotateX = useSpring(useTransform(mouseY, [-100, 100], [3, -3]), {
     stiffness: 180,
     damping: 18,
-  }
-);
+  });
 
-const rotateY = useSpring(
-  useTransform(mouseX, [-100, 100], [-3, 3]),
-  {
+  const rotateY = useSpring(useTransform(mouseX, [-100, 100], [-3, 3]), {
     stiffness: 180,
     damping: 18,
-  }
-);
+  });
 
   const handleMouseMove = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -63,6 +59,8 @@ const rotateY = useSpring(
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [role, setRole] = useState('reader')
+  const router = useRouter();
 
   const validate = () => {
     const newErrors = {};
@@ -106,11 +104,12 @@ const rotateY = useSpring(
         email: form.email,
         password: form.password,
         name: form.name,
-        callbackURL: "/",
+        role,
       });
       console.log("SIGNUP RESULT:", result);
 
       toast.success("🎉 Account created successfully!");
+      router.push("/");
 
       setForm({
         name: "",
@@ -230,6 +229,33 @@ const rotateY = useSpring(
               {errors.email && (
                 <p className="text-xs text-red-500 mt-1">{errors.email}</p>
               )}
+            </div>
+
+            <div className="flex flex-col gap-4">
+              <Label>Subscription plan</Label>
+              <RadioGroup
+              onChange={value => setRole(value)}
+                defaultValue="reader"
+                name="role"
+                orientation="horizontal"
+              >
+                <Radio value="reader">
+                  <Radio.Content>
+                    <Radio.Control>
+                      <Radio.Indicator />
+                    </Radio.Control>
+                    Reader
+                  </Radio.Content>
+                </Radio>
+                <Radio value="writer">
+                  <Radio.Content>
+                    <Radio.Control>
+                      <Radio.Indicator />
+                    </Radio.Control>
+                    Writer
+                  </Radio.Content>
+                </Radio>
+              </RadioGroup>
             </div>
 
             {/* Password */}
