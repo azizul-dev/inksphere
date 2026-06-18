@@ -2,19 +2,25 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { HouseFill, BookOpen, CircleDollar } from "@gravity-ui/icons";
+import {
+  HouseFill,
+  BookOpen,
+  CircleDollar,
+  ArrowRightFromSquare,
+  ArrowShapeLeftFromLine,
+} from "@gravity-ui/icons";
 import NavLink from "./NavLink";
+import { useSession, signOut } from "@/lib/auth-client";
 // If using Next.js, uncomment the line below to use Next.js optimized images:
 // import Image from "next/image";
 
 function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { data: session, isPending } = useSession();
+  // console.log("Session data in Navbar", session, "is pending", isPending)
+  const user = session?.user;
 
   // Simulation: Replace this with your actual authentication state
-  const [user, setUser] = useState({
-    isLoggedIn: false,
-    role: "reader", // Options: "reader", "writer", "admin"
-  });
 
   return (
     <nav className="sticky top-0 z-40 w-full border-b border-cyan-800 text-white backdrop-blur-lg">
@@ -104,7 +110,7 @@ function NavBar() {
 
             <li></li>
             {/* Dynamic links based on active user role */}
-            {user.isLoggedIn && (
+            {user && (
               <>
                 {user.role === "reader" && (
                   <li>
@@ -145,35 +151,40 @@ function NavBar() {
             </li>
           </ul>
 
+          <div className="h-10 w-px bg-gradient-to-b from-transparent via-yellow-600/50 to-transparent" />
+
           {/* Authentication System */}
           <div className="flex items-center gap-4 text-sm">
-            {!user.isLoggedIn ? (
+            {!user ? (
               <>
-                {/* Thin vertical spacer line matches your mockup image */}
-                <div className="h-4 w-px bg-zinc-800" />
+                <div className="h-4 w-px" />
+
                 <Link
                   href="/auth/signin"
-                  className="font-medium text-indigo-400 hover:text-indigo-300 transition-colors"
+                  className="font-medium text-black hover-indigo-300"
                 >
-                  Sign In
+                  <div className=" flex justify-center items-center gap-2">
+                    <ArrowShapeLeftFromLine />
+                    <span>Login</span>
+                  </div>
                 </Link>
+
                 <Link
-                  href="/register"
-                  className="rounded-full bg-white px-4 py-2 font-medium text-black transition-all hover:bg-zinc-200"
+                  href="/auth/signup"
+                  className="rounded-full  px-4 py-2 font-medium text-black"
                 >
                   Get Started
                 </Link>
               </>
             ) : (
               <div className="flex items-center gap-4">
-                <span className="rounded px-2 py-1 text-xs uppercase text-zinc-400">
-                  {user.role}
-                </span>
+                <span className="font-medium text-black">Hi.{user.name}</span>
+
                 <button
-                  onClick={() => setUser({ isLoggedIn: false, role: "reader" })}
-                  className="text-zinc-400 hover:text-white transition-colors"
+                  onClick={async () => await signOut()}
+                  className="text-red-400 hover:text-red-300"
                 >
-                  Logout
+                  <ArrowRightFromSquare />
                 </button>
               </div>
             )}
@@ -197,7 +208,7 @@ function NavBar() {
               </NavLink>
             </li>
 
-            {user.isLoggedIn && (
+            {user && (
               <>
                 {user.role === "reader" && (
                   <li>
@@ -239,20 +250,43 @@ function NavBar() {
 
             <hr className="my-2 border-zinc-800" />
 
-            {!user.isLoggedIn ? (
-              <div className="flex flex-col gap-2 pt-2">
-                <Link
-                  href="/auth/signin"
-                  className="block py-2 text-center font-medium text-indigo-400"
-                >
-                  Sign In
-                </Link>
-                <Link
-                  href="/register"
-                  className="block rounded-full bg-white py-2 text-center font-medium text-black"
-                >
-                  Get Started
-                </Link>
+            {!user ? (
+              <div className="flex items-center gap-4 text-sm">
+                {!user ? (
+                  <>
+                    <div className="h-4 w-px" />
+
+                    <Link
+                      href="/auth/signin"
+                      className="font-medium text-black hover-indigo-300"
+                    >
+                      <div className=" flex justify-center items-center gap-2">
+                        <ArrowShapeLeftFromLine />
+                        <span>Login</span>
+                      </div>
+                    </Link>
+
+                    <Link
+                      href="/auth/signup"
+                      className="rounded-full  px-4 py-2 font-medium text-black"
+                    >
+                      Get Started
+                    </Link>
+                  </>
+                ) : (
+                  <div className="flex items-center gap-4">
+                    <span className="font-medium text-black">
+                      Hi.{user.name}
+                    </span>
+
+                    <button
+                      onClick={async () => await signOut()}
+                      className="text-red-400 hover:text-red-300"
+                    >
+                      <ArrowRightFromSquare />
+                    </button>
+                  </div>
+                )}
               </div>
             ) : (
               <li>
