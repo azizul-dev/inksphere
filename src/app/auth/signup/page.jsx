@@ -18,7 +18,7 @@ import {
 } from "@gravity-ui/icons";
 import { signUp } from "@/lib/auth-client";
 import { toast } from "react-toastify";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function SignUpPage() {
   const mouseX = useMotionValue(0);
@@ -61,6 +61,9 @@ export default function SignUpPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [role, setRole] = useState('reader')
   const router = useRouter();
+
+  const searchParams = useSearchParams();
+    const redirectTo = searchParams.get('redirect') || '/';
 
   const validate = () => {
     const newErrors = {};
@@ -109,7 +112,7 @@ export default function SignUpPage() {
       console.log("SIGNUP RESULT:", result);
 
       toast.success("🎉 Account created successfully!");
-      router.push("/");
+      router.push(redirectTo);
 
       setForm({
         name: "",
@@ -367,7 +370,7 @@ export default function SignUpPage() {
           <p className="text-center text-sm text-gray-500 mt-6">
             Already have an account?{" "}
             <Link
-              href="/auth/signin"
+              href={`/auth/signin?redirect=${redirectTo}`}
               className="text-amber-500 font-semibold hover:text-amber-600 transition"
             >
               Sign In

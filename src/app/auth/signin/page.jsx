@@ -16,7 +16,7 @@ import {
 } from "@gravity-ui/icons";
 import { signIn } from "@/lib/auth-client"; // Assuming your library uses signIn
 import { toast } from "react-toastify";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function SignInPage() {
   const mouseX = useMotionValue(0);
@@ -62,6 +62,9 @@ export default function SignInPage() {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get('redirect') || '/';
+
   const validate = () => {
     const newErrors = {};
     if (!form.email.trim()) newErrors.email = "Email is required";
@@ -98,7 +101,7 @@ export default function SignInPage() {
       });
 
       toast.success("Welcome back! 👋");
-      router.push("/");
+      router.push(redirectTo);
       // Add redirection logic here if needed (e.g., router.push("/dashboard"))
     } catch (error) {
       toast.error(error.message || "Failed to sign in. Please try again.");
@@ -261,7 +264,7 @@ export default function SignInPage() {
           <p className="text-center text-sm text-gray-500 mt-6">
             Do not have an account?{" "}
             <Link
-              href="/auth/signup"
+              href={`/auth/signup?redirect=${redirectTo}`}
               className="text-amber-500 font-semibold hover:text-amber-600 transition"
             >
               Sign Up
