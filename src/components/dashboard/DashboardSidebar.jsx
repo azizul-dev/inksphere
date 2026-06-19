@@ -36,7 +36,7 @@ export function DashboardSidebar() {
     {
       icon: Bookmark,
       label: "Bookmarked Books",
-      href: "/dashboard/bookmarked-books",
+      href: "/dashboard/bookmark",
     },
     {
       icon: CirclePlus,

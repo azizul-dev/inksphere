@@ -7,12 +7,6 @@ import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import PublishToggleButton from "@/components/dashboard/PublishToggleButton";
 
-const session = await auth.api.getSession({
-  headers: await headers(),
-});
-
-const books = await getWriterBooks(session?.user?.id);
-
 const WriterManageBookPage = async () => {
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -73,7 +67,6 @@ const WriterManageBookPage = async () => {
                     key={book._id}
                     className="transition-colors duration-200 hover:bg-slate-50"
                   >
-                    {/* Book info */}
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
                         <div className="relative h-[70px] w-[50px] shrink-0 overflow-hidden rounded-xl">
@@ -191,7 +184,6 @@ const WriterManageBookPage = async () => {
               className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm transition-shadow duration-300 hover:shadow-md"
             >
               <div className="flex gap-3">
-                {/* Cover */}
                 <div className="relative h-28 w-20 shrink-0 overflow-hidden rounded-xl">
                   <Image
                     src={book.coverImage}
@@ -201,7 +193,6 @@ const WriterManageBookPage = async () => {
                   />
                 </div>
 
-                {/* Info */}
                 <div className="flex flex-1 flex-col min-w-0">
                   <div className="flex items-start justify-between gap-2">
                     <h3 className="line-clamp-2 text-sm font-bold text-slate-800 leading-tight">
@@ -220,12 +211,14 @@ const WriterManageBookPage = async () => {
                 </div>
               </div>
 
-              {/* Actions */}
               <div className="mt-3 flex items-center justify-end gap-2 border-t border-slate-100 pt-3">
-                <button className="flex items-center gap-1.5 rounded-xl bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-200">
+                <Link
+                  href={`/dashboard/writer/manage/${book._id}`}
+                  className="flex items-center gap-1.5 rounded-xl bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-200"
+                >
                   <Eye className="size-3.5" />
                   View
-                </button>
+                </Link>
                 <Link
                   href={`/dashboard/writer/manage/edit/${book._id}`}
                   className="rounded-xl p-2 hover:bg-slate-100 transition-colors"
@@ -282,12 +275,13 @@ const ActionButtons = ({ size = "md", book }) => {
 
   return (
     <div className="flex justify-center gap-1.5">
-      <button
+      <Link
+        href={`/dashboard/writer/manage/${book._id}`}
         className={`${cls} hover:bg-slate-100 transition-colors`}
         title="View"
       >
         <Eye className={iconCls} />
-      </button>
+      </Link>
       <Link
         href={`/dashboard/writer/manage/edit/${book._id}`}
         className={`${cls} hover:bg-slate-100 transition-colors`}
