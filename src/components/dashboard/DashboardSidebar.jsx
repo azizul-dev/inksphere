@@ -13,11 +13,14 @@ import {
 } from "@gravity-ui/icons";
 
 import { Button, Drawer } from "@heroui/react";
+import { useSession } from "@/lib/auth-client";
 
 export function DashboardSidebar() {
   const pathname = usePathname();
+  const { data: session, isPending } = useSession();
+  const user = session?.user;
 
-  const navItems = [
+  const writerNavLink = [
     {
       icon: House,
       label: "Dashboard",
@@ -49,6 +52,40 @@ export function DashboardSidebar() {
       href: "/dashboard/profile",
     },
   ];
+
+  const readerNavLink = [
+    {
+      icon: House,
+      label: "Dashboard",
+      href: "/dashboard/reader",
+    },
+    {
+      icon: Magnifier,
+      label: "Purchased Books",
+      href: "/dashboard/reader/purchased-books",
+    },
+    {
+      icon: Bookmark,
+      label: "Bookmarked Books",
+      href: "/dashboard/bookmark",
+    },
+    {
+      icon: Person,
+      label: "Profile",
+      href: "/dashboard/reader/profile",
+    },
+  ];
+
+  const navLinksMap = {
+    writer: writerNavLink,
+    reader: readerNavLink,
+  };
+
+  // While session is loading, or user isn't resolved yet, fall back to
+  // an empty list instead of crashing on `user.role`.
+  const navItems = isPending
+    ? []
+    : navLinksMap[user?.role || "reader"];
 
   const navContent = (
     <nav className="flex flex-col gap-2">
@@ -116,7 +153,7 @@ export function DashboardSidebar() {
     <>
       {/* Desktop Sidebar */}
 
-     <aside className="hidden lg:flex lg:w-72 shrink-0 border-r border-slate-200 bg-white p-5 sticky top-0 h-screen">
+      <aside className="hidden lg:flex lg:w-72 shrink-0 border-r border-slate-200 bg-white p-5 sticky top-0 h-screen">
         <div className="w-full">
           {/* Logo */}
 
@@ -124,7 +161,9 @@ export function DashboardSidebar() {
             <h2 className="text-2xl font-black bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 bg-clip-text text-transparent">
               BookVerse
             </h2>
-            <p className="mt-1 text-sm text-slate-500">Writer Dashboard</p>
+            <p className="mt-1 text-sm text-slate-500">
+              {user?.role === "writer" ? "Writer Dashboard" : "Reader Dashboard"}
+            </p>
           </div>
 
           {navContent}

@@ -11,16 +11,20 @@ import {
 } from "@gravity-ui/icons";
 import NavLink from "./NavLink";
 import { useSession, signOut } from "@/lib/auth-client";
-// If using Next.js, uncomment the line below to use Next.js optimized images:
-// import Image from "next/image";
 
 function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { data: session, isPending } = useSession();
-  // console.log("Session data in Navbar", session, "is pending", isPending)
   const user = session?.user;
 
-  // Simulation: Replace this with your actual authentication state
+  // role -> dashboard path map (fixed double-slash typo, no longer needed
+  // since JSX below already branches per-role, but kept here in case you
+  // want to use it elsewhere)
+  const dashboardLinks = {
+    writer: "/dashboard/writer",
+    reader: "/dashboard/reader",
+    admin: "/dashboard/admin",
+  };
 
   return (
     <nav className="sticky top-0 z-40 w-full border-b border-cyan-800 text-white backdrop-blur-lg">
@@ -57,14 +61,11 @@ function NavBar() {
             </svg>
           </button>
 
-          {/* Platform Logo using Image Tag */}
+          {/* Platform Logo */}
           <Link
             href="/"
             className="flex items-center gap-3 font-semibold tracking-wide"
           >
-            {/* Replace src="/logo.png" with your actual logo asset path.
-              If using Next.js <Image /> component, capitalize it to <Image ... />
-            */}
             <div
               className="w-10 h-10 rounded-[10px] flex items-center justify-center shadow-[0_0_20px_rgba(34,211,238,.25)]"
               style={{
@@ -80,7 +81,6 @@ function NavBar() {
                 className="w-full rounded-full h-full object-contain"
               />
             </div>
-            {/* Fallback visual container if image is missing */}
             <span className="font-bold text-xl">
               <span className="bg-linear-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
                 Ink
@@ -94,7 +94,6 @@ function NavBar() {
 
         {/* RIGHT SIDE: All links and action items grouped together */}
         <div className="hidden items-center gap-8 md:flex">
-          {/* Main Navigation Links */}
           <ul className="flex items-center gap-6 text-sm font-medium text-zinc-400">
             <li>
               <NavLink href="/">
@@ -108,14 +107,13 @@ function NavBar() {
               </NavLink>
             </li>
 
-            <li></li>
             {/* Dynamic links based on active user role */}
             {user && (
               <>
                 {user.role === "reader" && (
                   <li>
                     <Link
-                      href="/dashboard/writer"
+                      href={dashboardLinks.reader}
                       className="hover:text-white transition-colors"
                     >
                       Dashboard
@@ -125,7 +123,7 @@ function NavBar() {
                 {user.role === "writer" && (
                   <li>
                     <Link
-                      href="/dashboard/writer"
+                      href={dashboardLinks.writer}
                       className="hover:text-white transition-colors"
                     >
                       Write Studio
@@ -135,7 +133,7 @@ function NavBar() {
                 {user.role === "admin" && (
                   <li>
                     <Link
-                      href="/dashboard/admin"
+                      href={dashboardLinks.admin}
                       className="hover:text-white transition-colors"
                     >
                       Admin Panel
@@ -157,13 +155,11 @@ function NavBar() {
           <div className="flex items-center gap-4 text-sm">
             {!user ? (
               <>
-                <div className="h-4 w-px" />
-
                 <Link
                   href="/auth/signin"
                   className="font-medium text-black hover-indigo-300"
                 >
-                  <div className=" flex justify-center items-center gap-2">
+                  <div className="flex justify-center items-center gap-2">
                     <ArrowShapeLeftFromLine />
                     <span>Login</span>
                   </div>
@@ -171,18 +167,19 @@ function NavBar() {
 
                 <Link
                   href="/auth/signup"
-                  className="rounded-full  px-4 py-2 font-medium text-black"
+                  className="rounded-full px-4 py-2 font-medium text-black"
                 >
                   Get Started
                 </Link>
               </>
             ) : (
               <div className="flex items-center gap-4">
-                <span className="font-medium text-black">Hi.{user.name}</span>
+                <span className="font-medium text-black">Hi, {user.name}</span>
 
                 <button
                   onClick={async () => await signOut()}
                   className="text-red-400 hover:text-red-300"
+                  aria-label="Sign out"
                 >
                   <ArrowRightFromSquare />
                 </button>
@@ -213,17 +210,17 @@ function NavBar() {
                 {user.role === "reader" && (
                   <li>
                     <Link
-                      href="/dashboard/writer"
+                      href={dashboardLinks.reader}
                       className="block py-2 hover:text-white"
                     >
-                     Dashboard
+                      Dashboard
                     </Link>
                   </li>
                 )}
                 {user.role === "writer" && (
                   <li>
                     <Link
-                      href="/dashboard/writer"
+                      href={dashboardLinks.writer}
                       className="block py-2 hover:text-white"
                     >
                       Write Studio
@@ -233,7 +230,7 @@ function NavBar() {
                 {user.role === "admin" && (
                   <li>
                     <Link
-                      href="/dashboard/admin"
+                      href={dashboardLinks.admin}
                       className="block py-2 hover:text-white"
                     >
                       Admin Panel
@@ -251,47 +248,29 @@ function NavBar() {
             <hr className="my-2 border-zinc-800" />
 
             {!user ? (
-              <div className="flex items-center gap-4 text-sm">
-                {!user ? (
-                  <>
-                    <div className="h-4 w-px" />
-
-                    <Link
-                      href="/auth/signin"
-                      className="font-medium text-black hover-indigo-300"
-                    >
-                      <div className=" flex justify-center items-center gap-2">
-                        <ArrowShapeLeftFromLine />
-                        <span>Login</span>
-                      </div>
-                    </Link>
-
-                    <Link
-                      href="/auth/signup"
-                      className="rounded-full  px-4 py-2 font-medium text-black"
-                    >
-                      Get Started
-                    </Link>
-                  </>
-                ) : (
-                  <div className="flex items-center gap-4">
-                    <span className="font-medium text-black">
-                      Hi.{user.name}
-                    </span>
-
-                    <button
-                      onClick={async () => await signOut()}
-                      className="text-red-400 hover:text-red-300"
-                    >
-                      <ArrowRightFromSquare />
-                    </button>
+              <li className="flex items-center gap-4">
+                <Link
+                  href="/auth/signin"
+                  className="font-medium text-black hover-indigo-300"
+                >
+                  <div className="flex justify-center items-center gap-2">
+                    <ArrowShapeLeftFromLine />
+                    <span>Login</span>
                   </div>
-                )}
-              </div>
+                </Link>
+
+                <Link
+                  href="/auth/signup"
+                  className="rounded-full px-4 py-2 font-medium text-black"
+                >
+                  Get Started
+                </Link>
+              </li>
             ) : (
-              <li>
+              <li className="flex items-center gap-4">
+                <span className="font-medium text-black">Hi, {user.name}</span>
                 <button
-                  onClick={() => setUser({ isLoggedIn: false, role: "reader" })}
+                  onClick={async () => await signOut()}
                   className="block w-full py-2 text-left text-red-400 hover:text-red-300"
                 >
                   Logout
