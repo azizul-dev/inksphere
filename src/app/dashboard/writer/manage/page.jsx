@@ -5,6 +5,7 @@ import Link from "next/link";
 import DeleteBookButton from "@/components/dashboard/DeleteBookButton";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
+import PublishToggleButton from "@/components/dashboard/PublishToggleButton";
 
 const session = await auth.api.getSession({
   headers: await headers(),
@@ -231,6 +232,7 @@ const WriterManageBookPage = async () => {
                 >
                   <Pencil className="size-5" />
                 </Link>
+                <PublishToggleButton id={book._id} status={book.status} size="sm" />
                 <DeleteBookButton id={book._id} title={book.title} />
               </div>
             </div>
@@ -292,6 +294,7 @@ const ActionButtons = ({ size = "md", book }) => {
       >
         <Pencil className={iconCls} />
       </Link>
+      <PublishToggleButton id={book._id} status={book.status} size={size} />
       <DeleteBookButton id={book._id} title={book.title} />
     </div>
   );
