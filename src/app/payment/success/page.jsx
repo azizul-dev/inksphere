@@ -1,33 +1,91 @@
-import { redirect } from 'next/navigation'
-
-import { stripe } from '../../lib/stripe'
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { stripe } from "@/lib/stripe";
 
 export default async function Success({ searchParams }) {
-  const { session_id } = await searchParams
+  const { session_id } = await searchParams;
 
-  if (!session_id)
-    throw new Error('Please provide a valid session_id (`cs_test_...`)')
-
-  const {
-    status,
-    customer_details: { email: customerEmail }
-  } = await stripe.checkout.sessions.retrieve(session_id, {
-    expand: ['line_items', 'payment_intent']
-  })
-
-  if (status === 'open') {
-    return redirect('/')
+  if (!session_id) {
+    return redirect("/");
   }
 
-  if (status === 'complete') {
-    return (
-      <section id="success">
-        <p>
-          We appreciate your business! A confirmation email will be sent to{' '}
-          {customerEmail}. If you have any questions, please email{' '}
-          <a href="mailto:orders@example.com">orders@example.com</a>.
+  const session = await stripe.checkout.sessions.retrieve(session_id, {
+    expand: ["line_items", "payment_intent"],
+  });
+
+  if (session.status === "open") {
+    return redirect("/");
+  }
+
+  const customerEmail = session.customer_details?.email;
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-amber-50 px-4 py-10">
+      <div className="mx-auto max-w-2xl">
+        <div className="overflow-hidden rounded-3xl border border-orange-100 bg-white shadow-[0_20px_80px_rgba(249,115,22,0.15)]">
+          
+          {/* Header */}
+          <div className="bg-gradient-to-r from-amber-500 to-orange-500 px-8 py-10 text-center text-white">
+            <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-white/20 text-5xl backdrop-blur">
+              ✅
+            </div>
+
+            <h1 className="mt-6 text-3xl font-black">
+              Payment Successful 🎉
+            </h1>
+
+            <p className="mt-3 text-orange-50">
+              Your ebook purchase has been completed successfully.
+            </p>
+          </div>
+
+          {/* Content */}
+          <div className="p-6 sm:p-10">
+            <div className="rounded-2xl bg-slate-50 p-5 text-center">
+              <p className="text-sm text-slate-500">
+                Confirmation sent to
+              </p>
+
+              <p className="mt-2 break-all text-lg font-bold text-slate-800">
+                {customerEmail}
+              </p>
+            </div>
+
+            <div className="mt-8 rounded-2xl border border-emerald-100 bg-emerald-50 p-5">
+              <h3 className="font-bold text-emerald-700">
+                Purchase Completed
+              </h3>
+
+              <ul className="mt-3 space-y-2 text-sm text-emerald-700">
+                <li>✅ Payment verified successfully</li>
+                <li>✅ Ebook unlocked</li>
+                <li>✅ Purchase saved to your account</li>
+                <li>✅ Confirmation email sent</li>
+              </ul>
+            </div>
+
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Link
+                href="/dashboard/bookmark"
+                className="flex h-12 flex-1 items-center justify-center rounded-xl border border-slate-200 font-semibold text-slate-700 transition hover:bg-slate-50"
+              >
+                My Library
+              </Link>
+
+              <Link
+                href="/"
+                className="flex h-12 flex-1 items-center justify-center rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 font-bold text-white shadow-lg"
+              >
+                Explore More Books
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        <p className="mt-6 text-center text-sm text-slate-400">
+          Thank you for supporting writers on InkSphere ❤️
         </p>
-      </section>
-    )
-  }
+      </div>
+    </div>
+  );
 }
