@@ -21,9 +21,7 @@ const BookDetailPage = async ({ params }) => {
     return (
       <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-slate-700">
-            Ebook not found
-          </h2>
+          <h2 className="text-2xl font-bold text-slate-700">Ebook not found</h2>
           <p className="mt-2 text-slate-500">
             The ebook you are looking for does not exist or was removed.
           </p>
@@ -110,12 +108,20 @@ const BookDetailPage = async ({ params }) => {
                     You can not buy your own book
                   </button>
                 ) : (
-                  <Link href={`/books/${id}/booking`}
-                    // 👉 এখানে তোমার নিজের purchase লজিক বসবে
-                    className="flex h-14 flex-1 items-center justify-center rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 px-6 font-bold text-white shadow-lg shadow-orange-200 transition-all hover:from-amber-600 hover:to-orange-600"
+                  <form
+                    action="/api/checkout_sessions"
+                    method="POST"
+                    className="flex-1"
                   >
-                    Buy Now — ${book.price}
-                  </Link>
+                    <input type="hidden" name="bookId" value={id} />
+
+                    <button
+                      type="submit"
+                      className="flex h-14 w-full items-center justify-center rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 px-6 font-bold text-white"
+                    >
+                      Buy Now — ${book.price}
+                    </button>
+                  </form>
                 )}
 
                 <BookmarkButton
