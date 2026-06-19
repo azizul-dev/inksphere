@@ -8,11 +8,8 @@ import { createNewBook } from "@/lib/actions/book";
 import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 
-
 export default function AddNewBooks() {
-
-
-const router = useRouter();
+  const router = useRouter();
   const { data: session } = useSession();
   const [formData, setFormData] = useState({
     title: "",
@@ -34,54 +31,81 @@ const router = useRouter();
   };
 
   console.log(session);
- const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  const { title, genre, price, coverImage, shortDescription, content } =
-    formData;
+    const { title, genre, price, coverImage, shortDescription, content } =
+      formData;
 
-  if (
-    !title.trim() ||
-    !genre.trim() ||
-    !price ||
-    !coverImage.trim() ||
-    !shortDescription.trim() ||
-    !content.trim()
-  ) {
-    toast.error("All fields are required ❌");
-    return;
-  }
+    if (
+      !title.trim() ||
+      !genre.trim() ||
+      !price ||
+      !coverImage.trim() ||
+      !shortDescription.trim() ||
+      !content.trim()
+    ) {
+      toast.error("All fields are required ❌");
+      return;
+    }
 
-  const bookData = {
-    ...formData,
-    writerId: session?.user?.id,
+    const bookData = {
+      ...formData,
+      price: Number(formData.price), // bonus fix নিচে ব্যাখ্যা করছি
+      writerId: session?.user?.id,
+      writerName: session?.user?.name, // ← নতুন লাইন
+    };
+
+    try {
+      const res = await createNewBook(bookData);
+
+      if (res.insertedId) {
+        toast.success("Book Published Successfully 🚀");
+
+        setFormData({
+          title: "",
+          genre: "",
+          price: "",
+          coverImage: "",
+          shortDescription: "",
+          content: "",
+          status: "draft",
+        });
+
+        router.push("/dashboard/writer/manage");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong while publishing"); // bonus: এটাও যোগ করো, এখন error হলে toast দেখাচ্ছে না
+    }
   };
 
-  try {
-    const res = await createNewBook(bookData);
+  const handleSaveDraft = async () => {
+    const { title, coverImage } = formData;
 
-    if (res.insertedId) {
-      toast.success("Book Published Successfully 🚀");
-
-      setFormData({
-        title: "",
-        genre: "",
-        price: "",
-        coverImage: "",
-        shortDescription: "",
-        content: "",
-        status: "draft",
-      });
-
-    
-      router.push("/dashboard/writer/manage");
+    if (!title.trim() || !coverImage.trim()) {
+      toast.error("At least title and cover image are required to save draft");
+      return;
     }
-  } catch (error) {
-    console.log(error);
-    
-  }
-};
 
+    const bookData = {
+      ...formData,
+      price: Number(formData.price) || 0,
+      writerId: session?.user?.id,
+      writerName: session?.user?.name,
+      status: "draft",
+    };
+
+    try {
+      const res = await createNewBook(bookData);
+      if (res.insertedId) {
+        toast.success("Saved as draft");
+        router.push("/dashboard/writer/manage");
+      }
+    } catch (error) {
+      toast.error("Failed to save draft");
+    }
+  };
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-6 md:px-6 lg:px-8">
       <motion.div
@@ -252,6 +276,7 @@ const router = useRouter();
           <div className="flex flex-col gap-4 sm:flex-row sm:justify-end">
             <button
               type="button"
+              onClick={handleSaveDraft}
               className="h-14 rounded-2xl border border-slate-300 px-8 font-semibold transition-all duration-300 hover:bg-slate-100"
             >
               Save Draft

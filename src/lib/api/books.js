@@ -2,7 +2,8 @@ const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 export const getWriterBooks = async (writerId) => {
   const res = await fetch(`${baseUrl}/api/books?writerId=${writerId}`);
-  return res.json();
+  const data = await res.json();
+  return data.books; // array বের করে আনা
 };
 
 export const getSingleBook = async (id) => {
@@ -20,3 +21,17 @@ export const getBooksByIds = async (ids) => {
   });
   return res.json();
 };
+
+export const getPublishedBooks = async (searchParams = {}) => {
+  const params = new URLSearchParams({
+    status: "published",
+    ...searchParams,
+  });
+
+  const res = await fetch(`${baseUrl}/api/books?${params.toString()}`, {
+    cache: "no-store",
+  });
+  return res.json(); // { books, totalCount, totalPages, currentPage }
+};
+
+
