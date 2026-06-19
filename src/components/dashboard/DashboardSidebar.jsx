@@ -20,66 +20,67 @@ export function DashboardSidebar() {
   const { data: session, isPending } = useSession();
   const user = session?.user;
 
-  const writerNavLink = [
-    {
-      icon: House,
-      label: "Dashboard",
-      href: "/dashboard/writer",
-    },
-    {
-      icon: House,
-      label: "Book",
-      href: "/dashboard/writer/manage",
-    },
-    {
-      icon: Magnifier,
-      label: "Purchased Books",
-      href: "/dashboard/purchased-books",
-    },
-    {
-      icon: Bookmark,
-      label: "Bookmarked Books",
-      href: "/dashboard/bookmark",
-    },
-    {
-      icon: CirclePlus,
-      label: "Add a Book",
-      href: "/dashboard/writer/manage/new",
-    },
-    {
-      icon: Person,
-      label: "Profile",
-      href: "/dashboard/profile",
-    },
-  ];
+ const writerNavLink = [
+  {
+    icon: House,
+    label: "Dashboard",
+    href: "/dashboard/writer",
+  },
+  {
+    icon: House,
+    label: "Book",
+    href: "/dashboard/writer/manage",
+  },
+  {
+    icon: Magnifier,
+    label: "Purchased Books",
+    href: "/dashboard/purchased-books",
+  },
+  {
+    icon: Bookmark,
+    label: "Bookmarked Books",
+    href: "/dashboard/bookmark",
+  },
+  {
+    icon: CirclePlus,
+    label: "Add a Book",
+    href: "/dashboard/writer/manage/new",
+  },
+  {
+    icon: Person,
+    label: "Profile",
+    href: "/dashboard/profile", // ✅ ঠিকই আছে
+  },
+];
 
-  const readerNavLink = [
-    {
-      icon: House,
-      label: "Dashboard",
-      href: "/dashboard/reader",
-    },
-    {
-      icon: Magnifier,
-      label: "Purchased Books",
-      href: "/dashboard/reader/purchased-books",
-    },
-    {
-      icon: Bookmark,
-      label: "Bookmarked Books",
-      href: "/dashboard/bookmark",
-    },
-    {
-      icon: Person,
-      label: "Profile",
-      href: "/dashboard/reader/profile",
-    },
-  ];
+const readerNavLink = [
+  {
+    icon: House,
+    label: "Dashboard",
+    href: "/dashboard/reader",
+  },
+  {
+    icon: Magnifier,
+    label: "Purchased Books",
+    href: "/dashboard/purchased-books", // ⬅️ changed: /dashboard/reader/purchased-books থেকে
+  },
+  {
+    icon: Bookmark,
+    label: "Bookmarked Books",
+    href: "/dashboard/bookmark", // ⬅️ changed: /dashboard/bookmark (already matched writer)
+  },
+  {
+    icon: Person,
+    label: "Profile",
+    href: "/dashboard/profile", // ⬅️ changed: /dashboard/reader/profile থেকে
+  },
+];
 
-  const navLinksMap = {
-    writer: writerNavLink,
-    reader: readerNavLink,
-  };
+const navLinksMap = {
+  writer: writerNavLink,
+  reader: readerNavLink,
+};
+
 
   // While session is loading, or user isn't resolved yet, fall back to
   // an empty list instead of crashing on `user.role`.
