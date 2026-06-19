@@ -225,10 +225,12 @@ const WriterManageBookPage = async () => {
                   <Eye className="size-3.5" />
                   View
                 </button>
-                <button className="flex items-center gap-1.5 rounded-xl bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-200">
-                  <Pencil className="size-3.5" />
-                  Edit
-                </button>
+                <Link
+                  href={`/dashboard/writer/manage/edit/${book._id}`}
+                  className="rounded-xl p-2 hover:bg-slate-100 transition-colors"
+                >
+                  <Pencil className="size-5" />
+                </Link>
                 <DeleteBookButton id={book._id} title={book.title} />
               </div>
             </div>
@@ -284,12 +286,12 @@ const ActionButtons = ({ size = "md", book }) => {
       >
         <Eye className={iconCls} />
       </button>
-      <button
+      <Link
+        href={`/dashboard/writer/manage/edit/${book._id}`}
         className={`${cls} hover:bg-slate-100 transition-colors`}
-        title="Edit"
       >
         <Pencil className={iconCls} />
-      </button>
+      </Link>
       <DeleteBookButton id={book._id} title={book.title} />
     </div>
   );

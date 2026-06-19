@@ -3,3 +3,8 @@ export const getWriterBooks = async (writerId, status = 'draft') => {
     const res = await fetch(`${baseUrl}/api/books?writerId=${writerId}&status=${status}`);
     return res.json();
 }
+
+export const getSingleBook = async (id) => {
+  const res = await fetch(`${baseUrl}/api/books/${id}`);
+  return res.json();
+};
