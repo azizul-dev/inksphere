@@ -133,13 +133,13 @@ export function DashboardSidebar() {
 
       {/* Mobile Drawer Button */}
 
-      <div className="fixed left-4 top-4 z-50 lg:hidden">
+      <div className="lg:hidden py-1">
         <Drawer>
           <Button
             className="
             min-w-0
             rounded-xl
-            bg-white
+           
             shadow-lg
             border
             border-slate-200

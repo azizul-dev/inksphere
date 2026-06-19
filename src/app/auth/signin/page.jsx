@@ -16,10 +16,12 @@ import {
 } from "@gravity-ui/icons";
 import { signIn } from "@/lib/auth-client"; // Assuming your library uses signIn
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 export default function SignInPage() {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
+  const router = useRouter();
 
   const rotateX = useSpring(
     useTransform(mouseY, [-100, 100], [3, -3]),
@@ -92,10 +94,11 @@ export default function SignInPage() {
       const result = await signIn.email({
         email: form.email,
         password: form.password,
-        callbackURL: "/",
+        
       });
 
       toast.success("Welcome back! 👋");
+      router.push("/");
       // Add redirection logic here if needed (e.g., router.push("/dashboard"))
     } catch (error) {
       toast.error(error.message || "Failed to sign in. Please try again.");

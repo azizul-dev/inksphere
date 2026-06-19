@@ -12,3 +12,11 @@ export const createNewBook = async (newBookData) =>{
     });
     return res.json();
 };
+
+export const deleteBook = async (id) => {
+  const res = await fetch(`${baseUrl}/api/books/${id}`, {
+    method: "DELETE",
+  });
+
+  return res.json();
+};

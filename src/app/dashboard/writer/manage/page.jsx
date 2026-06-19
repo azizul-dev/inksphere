@@ -2,14 +2,26 @@ import Image from "next/image";
 import { Pencil, TrashBin, Eye, CirclePlus } from "@gravity-ui/icons";
 import { getWriterBooks } from "@/lib/api/books";
 import Link from "next/link";
+import DeleteBookButton from "@/components/dashboard/DeleteBookButton";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
+
+const session = await auth.api.getSession({
+  headers: await headers(),
+});
+
+const books = await getWriterBooks(session?.user?.id);
 
 const WriterManageBookPage = async () => {
-  const books = await getWriterBooks("6a3413ad75457e69ad2dc064");
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const books = await getWriterBooks(session?.user?.id);
 
   return (
     <div className="min-h-screen bg-slate-50 px-4 py-6 sm:px-6 lg:px-8 xl:px-10">
       <div className="mx-auto max-w-7xl space-y-6 sm:space-y-8">
-
         {/* ───── Header ───── */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -21,7 +33,10 @@ const WriterManageBookPage = async () => {
             </p>
           </div>
 
-          <Link href="/dashboard/writer/manage/new" className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 px-5 py-3 font-semibold text-white shadow-lg transition-opacity hover:opacity-90 sm:w-auto">
+          <Link
+            href="/dashboard/writer/manage/new"
+            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 px-5 py-3 font-semibold text-white shadow-lg transition-opacity hover:opacity-90 sm:w-auto"
+          >
             <CirclePlus className="size-5" />
             Add New Book
           </Link>
@@ -33,11 +48,21 @@ const WriterManageBookPage = async () => {
             <table className="min-w-full">
               <thead className="border-b bg-slate-50">
                 <tr>
-                  <th className="px-6 py-4 text-left text-sm font-bold text-slate-700">Book</th>
-                  <th className="px-6 py-4 text-left text-sm font-bold text-slate-700">Genre</th>
-                  <th className="px-6 py-4 text-left text-sm font-bold text-slate-700">Price</th>
-                  <th className="px-6 py-4 text-left text-sm font-bold text-slate-700">Status</th>
-                  <th className="px-6 py-4 text-center text-sm font-bold text-slate-700">Actions</th>
+                  <th className="px-6 py-4 text-left text-sm font-bold text-slate-700">
+                    Book
+                  </th>
+                  <th className="px-6 py-4 text-left text-sm font-bold text-slate-700">
+                    Genre
+                  </th>
+                  <th className="px-6 py-4 text-left text-sm font-bold text-slate-700">
+                    Price
+                  </th>
+                  <th className="px-6 py-4 text-left text-sm font-bold text-slate-700">
+                    Status
+                  </th>
+                  <th className="px-6 py-4 text-center text-sm font-bold text-slate-700">
+                    Actions
+                  </th>
                 </tr>
               </thead>
 
@@ -59,7 +84,9 @@ const WriterManageBookPage = async () => {
                           />
                         </div>
                         <div>
-                          <h3 className="font-semibold text-slate-800">{book.title}</h3>
+                          <h3 className="font-semibold text-slate-800">
+                            {book.title}
+                          </h3>
                           <p className="mt-0.5 max-w-xs truncate text-sm text-slate-500">
                             {book.shortDescription}
                           </p>
@@ -67,16 +94,20 @@ const WriterManageBookPage = async () => {
                       </div>
                     </td>
 
-                    <td className="px-6 py-4 text-sm text-slate-600">{book.genre}</td>
+                    <td className="px-6 py-4 text-sm text-slate-600">
+                      {book.genre}
+                    </td>
 
-                    <td className="px-6 py-4 font-semibold text-slate-800">${book.price}</td>
+                    <td className="px-6 py-4 font-semibold text-slate-800">
+                      ${book.price}
+                    </td>
 
                     <td className="px-6 py-4">
                       <StatusBadge status={book.status} />
                     </td>
 
                     <td className="px-6 py-4">
-                      <ActionButtons />
+                      <ActionButtons book={book} />
                     </td>
                   </tr>
                 ))}
@@ -91,11 +122,21 @@ const WriterManageBookPage = async () => {
             <table className="min-w-full">
               <thead className="border-b bg-slate-50">
                 <tr>
-                  <th className="px-4 py-3 text-left text-sm font-bold text-slate-700">Book</th>
-                  <th className="px-4 py-3 text-left text-sm font-bold text-slate-700">Genre</th>
-                  <th className="px-4 py-3 text-left text-sm font-bold text-slate-700">Price</th>
-                  <th className="px-4 py-3 text-left text-sm font-bold text-slate-700">Status</th>
-                  <th className="px-4 py-3 text-center text-sm font-bold text-slate-700">Actions</th>
+                  <th className="px-4 py-3 text-left text-sm font-bold text-slate-700">
+                    Book
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-bold text-slate-700">
+                    Genre
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-bold text-slate-700">
+                    Price
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-bold text-slate-700">
+                    Status
+                  </th>
+                  <th className="px-4 py-3 text-center text-sm font-bold text-slate-700">
+                    Actions
+                  </th>
                 </tr>
               </thead>
 
@@ -113,20 +154,26 @@ const WriterManageBookPage = async () => {
                           />
                         </div>
                         <div>
-                          <h3 className="text-sm font-semibold text-slate-800">{book.title}</h3>
+                          <h3 className="text-sm font-semibold text-slate-800">
+                            {book.title}
+                          </h3>
                           <p className="mt-0.5 w-36 truncate text-xs text-slate-500">
                             {book.shortDescription}
                           </p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-sm text-slate-600">{book.genre}</td>
-                    <td className="px-4 py-3 text-sm font-semibold text-slate-800">${book.price}</td>
+                    <td className="px-4 py-3 text-sm text-slate-600">
+                      {book.genre}
+                    </td>
+                    <td className="px-4 py-3 text-sm font-semibold text-slate-800">
+                      ${book.price}
+                    </td>
                     <td className="px-4 py-3">
                       <StatusBadge status={book.status} />
                     </td>
                     <td className="px-4 py-3">
-                      <ActionButtons size="sm" />
+                      <ActionButtons size="sm" book={book} />
                     </td>
                   </tr>
                 ))}
@@ -163,7 +210,9 @@ const WriterManageBookPage = async () => {
                   </div>
 
                   <p className="mt-1 text-xs text-slate-400">{book.genre}</p>
-                  <p className="mt-1.5 text-sm font-bold text-orange-500">${book.price}</p>
+                  <p className="mt-1.5 text-sm font-bold text-orange-500">
+                    ${book.price}
+                  </p>
                   <p className="mt-1.5 line-clamp-2 text-xs text-slate-500 leading-relaxed">
                     {book.shortDescription}
                   </p>
@@ -180,10 +229,7 @@ const WriterManageBookPage = async () => {
                   <Pencil className="size-3.5" />
                   Edit
                 </button>
-                <button className="flex items-center gap-1.5 rounded-xl bg-red-50 px-3 py-1.5 text-xs font-medium text-red-500 transition-colors hover:bg-red-100">
-                  <TrashBin className="size-3.5" />
-                  Delete
-                </button>
+                <DeleteBookButton id={book._id} title={book.title} />
               </div>
             </div>
           ))}
@@ -195,7 +241,9 @@ const WriterManageBookPage = async () => {
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-50">
               <CirclePlus className="size-8 text-amber-400" />
             </div>
-            <h3 className="text-lg font-bold text-slate-700 sm:text-xl">No Books Found</h3>
+            <h3 className="text-lg font-bold text-slate-700 sm:text-xl">
+              No Books Found
+            </h3>
             <p className="mt-2 text-sm text-slate-500 sm:text-base">
               Start publishing your first ebook.
             </p>
@@ -205,7 +253,6 @@ const WriterManageBookPage = async () => {
             </button>
           </div>
         )}
-
       </div>
     </div>
   );
@@ -225,23 +272,25 @@ const StatusBadge = ({ status }) => (
   </span>
 );
 
-const ActionButtons = ({ size = "md" }) => {
-  const cls = size === "sm"
-    ? "rounded-lg p-1.5"
-    : "rounded-xl p-2";
+const ActionButtons = ({ size = "md", book }) => {
+  const cls = size === "sm" ? "rounded-lg p-1.5" : "rounded-xl p-2";
   const iconCls = size === "sm" ? "size-4" : "size-5";
 
   return (
     <div className="flex justify-center gap-1.5">
-      <button className={`${cls} hover:bg-slate-100 transition-colors`} title="View">
+      <button
+        className={`${cls} hover:bg-slate-100 transition-colors`}
+        title="View"
+      >
         <Eye className={iconCls} />
       </button>
-      <button className={`${cls} hover:bg-slate-100 transition-colors`} title="Edit">
+      <button
+        className={`${cls} hover:bg-slate-100 transition-colors`}
+        title="Edit"
+      >
         <Pencil className={iconCls} />
       </button>
-      <button className={`${cls} hover:bg-red-50 transition-colors`} title="Delete">
-        <TrashBin className={`${iconCls} text-red-500`} />
-      </button>
+      <DeleteBookButton id={book._id} title={book.title} />
     </div>
   );
 };

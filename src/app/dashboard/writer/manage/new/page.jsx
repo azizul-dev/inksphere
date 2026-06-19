@@ -5,10 +5,14 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { toast } from "react-toastify";
 import { createNewBook } from "@/lib/actions/book";
-import { redirect } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
+
 
 export default function AddNewBooks() {
+
+
+const router = useRouter();
   const { data: session } = useSession();
   const [formData, setFormData] = useState({
     title: "",
@@ -29,6 +33,7 @@ export default function AddNewBooks() {
     }));
   };
 
+  console.log(session);
  const handleSubmit = async (e) => {
   e.preventDefault();
 
@@ -68,7 +73,8 @@ export default function AddNewBooks() {
         status: "draft",
       });
 
-      redirect("/dashboard/writer")
+    
+      router.push("/dashboard/writer/manage");
     }
   } catch (error) {
     console.log(error);
