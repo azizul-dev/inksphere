@@ -79,12 +79,12 @@ export function DashboardSidebar() {
   {
     icon: Database,
     label: "Sell",
-    href: "/dashboard/sell",
+    href: "/dashboard/writer/sales-history",
   },
   {
     icon: Person,
     label: "Profile",
-    href: "/dashboard/profile", // ✅ ঠিকই আছে
+    href: "/dashboard/profile", 
   },
 ];
 
@@ -97,7 +97,7 @@ const readerNavLink = [
   {
     icon: Magnifier,
     label: "Purchased Books",
-    href: "/dashboard/purchased-books", // ⬅️ changed: /dashboard/reader/purchased-books থেকে
+    href: "/dashboard/reader/purchased-books", // ⬅️ changed: /dashboard/reader/purchased-books থেকে
   },
   {
     icon: Bookmark,

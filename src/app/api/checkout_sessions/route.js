@@ -48,6 +48,7 @@ export async function POST(req) {
       metadata: {
         bookId: String(book._id),
         userId: String(session.user.id),
+        writerId: String(book.writerId),
       },
 
       line_items: [
