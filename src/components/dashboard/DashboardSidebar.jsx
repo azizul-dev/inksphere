@@ -10,6 +10,10 @@ import {
   House,
   Magnifier,
   Person,
+  PersonMagnifier,
+  Briefcase,
+  CreditCard,
+  Database,
 } from "@gravity-ui/icons";
 
 import { Button, Drawer } from "@heroui/react";
@@ -19,6 +23,37 @@ export function DashboardSidebar() {
   const pathname = usePathname();
   const { data: session, isPending } = useSession();
   const user = session?.user;
+
+  const dashboardTitle =
+  user?.role === "admin"
+    ? "Admin Dashboard"
+    : user?.role === "writer"
+    ? "Writer Dashboard"
+    : "Reader Dashboard";
+
+
+  const adminNavLinks= [
+  {
+    icon: House, // Assuming a standard dashboard/home icon
+    label: "Dashboard",
+    href: "/admin/dashboard",
+  },
+  {
+    icon: PersonMagnifier, // Assuming a standard users/people icon
+    label: "Users",
+    href: "/admin/users",
+  },
+  {
+    icon: Briefcase, // Or Book/Folder depending on your icon set for the briefcase-like icon
+    label: "Books",
+    href: "/admin/books",
+  },
+  {
+    icon: CreditCard, // Assuming a standard payment/credit card icon
+    label: "Payments",
+    href: "/admin/payments",
+  },
+];
 
  const writerNavLink = [
   {
@@ -32,11 +67,6 @@ export function DashboardSidebar() {
     href: "/dashboard/writer/manage",
   },
   {
-    icon: Magnifier,
-    label: "Purchased Books",
-    href: "/dashboard/purchased-books",
-  },
-  {
     icon: Bookmark,
     label: "Bookmarked Books",
     href: "/dashboard/bookmark",
@@ -45,6 +75,11 @@ export function DashboardSidebar() {
     icon: CirclePlus,
     label: "Add a Book",
     href: "/dashboard/writer/manage/new",
+  },
+  {
+    icon: Database,
+    label: "Sell",
+    href: "/dashboard/sell",
   },
   {
     icon: Person,
@@ -79,6 +114,7 @@ const readerNavLink = [
 const navLinksMap = {
   writer: writerNavLink,
   reader: readerNavLink,
+  admin: adminNavLinks,
 };
 
 
@@ -163,7 +199,7 @@ const navLinksMap = {
               BookVerse
             </h2>
             <p className="mt-1 text-sm text-slate-500">
-              {user?.role === "writer" ? "Writer Dashboard" : "Reader Dashboard"}
+              {dashboardTitle}
             </p>
           </div>
 
