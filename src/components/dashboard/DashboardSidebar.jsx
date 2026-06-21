@@ -41,17 +41,17 @@ export function DashboardSidebar() {
   {
     icon: PersonMagnifier, // Assuming a standard users/people icon
     label: "Users",
-    href: "/admin/users",
+    href: "/dashboard/admin/users",
   },
   {
     icon: Briefcase, // Or Book/Folder depending on your icon set for the briefcase-like icon
     label: "Books",
-    href: "/admin/books",
+    href: "/dashboard/admin/books",
   },
   {
     icon: CreditCard, // Assuming a standard payment/credit card icon
     label: "Payments",
-    href: "/admin/payments",
+    href: "/dashboard/admin/payments",
   },
 ];
 

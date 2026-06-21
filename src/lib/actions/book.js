@@ -31,3 +31,19 @@ export const updateBook = async (id, bookData) => {
 
   return res.json();
 };
+
+export const getAllBooksAdmin = async () => {
+  const res = await fetch(`${baseUrl}/api/books?limit=1000`, {
+    cache: "no-store",
+  });
+  return res.json();
+};
+
+export const toggleBookStatus = async (id, status) => {
+  const res = await fetch(`${baseUrl}/api/books/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ status }),
+  });
+  return res.json();
+};
