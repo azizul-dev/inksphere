@@ -1,32 +1,26 @@
-"use server";
+import { protectedFetch } from "../core/server";
 
-import { serverFetch, serverMutation } from "../core/server";
-
- 
-
-export const createPurchase = async ({
-  userId, bookId, writerId, price, transactionId,
-}) => {
-  return await serverMutation("/api/purchases", {
-    userId, bookId, writerId, price, transactionId,
-  });
-};
-
+// কিনেছে কিনা check
 export const checkPurchase = async (userId, bookId) => {
   if (!userId || !bookId) return { purchased: false };
-  return await serverFetch(`/api/purchases/check?userId=${userId}&bookId=${bookId}`);
+  return await protectedFetch(
+    `/api/purchases/check?userId=${userId}&bookId=${bookId}`
+  );
 };
 
+// User এর নিজের purchase history
 export const getUserPurchases = async (userId) => {
   if (!userId) return [];
-  return await serverFetch(`/api/purchases?userId=${userId}`);
+  return await protectedFetch(`/api/purchases?userId=${userId}`);
 };
 
+// Writer এর sales history
 export const getWriterSales = async (writerId) => {
   if (!writerId) return [];
-  return await serverFetch(`/api/purchases/sales?writerId=${writerId}`);
+  return await protectedFetch(`/api/purchases/sales?writerId=${writerId}`);
 };
 
+// Admin — সব purchases
 export const getAllPurchases = async () => {
-  return await serverFetch("/api/purchases");
+  return await protectedFetch("/api/purchases");
 };

@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { stripe } from "@/lib/stripe";
-import { createPurchase } from "@/lib/api/purchases";
+import { createPurchase } from "@/lib/actions/purchase";
+ 
 
 export default async function Success({ searchParams }) {
   const { session_id } = await searchParams;

@@ -1,6 +1,7 @@
 "use client";
 
 import { useSession } from "@/lib/auth-client";
+import { useState, useEffect } from "react";
 import {
   Person,
   Pencil,
@@ -10,10 +11,24 @@ import {
 
 import { motion } from "framer-motion";
 
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+
 export default function ProfilePage() {
   const { data: session, isPending } = useSession();
-
   const user = session?.user;
+
+  // Fetch real role from Express backend (better-auth admin() plugin
+  // blocks client-set roles, so session.user.role is always null)
+  const [dbRole, setDbRole] = useState(null);
+  useEffect(() => {
+    if (!user?.email) return;
+    fetch(`${BASE_URL}/api/users/${user.email}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((dbUser) => { if (dbUser?.role) setDbRole(dbUser.role); })
+      .catch(() => {});
+  }, [user?.email]);
+
+  const role = dbRole || user?.role || null;
 
   if (isPending) {
     return (
@@ -144,7 +159,7 @@ export default function ProfilePage() {
                 text-white
               "
             >
-              {user.role}
+              {role || "—"}
             </span>
           </div>
         </div>
@@ -171,7 +186,7 @@ export default function ProfilePage() {
 
         <StatCard
           title="Role"
-          value={user.role}
+          value={role || "—"}
           icon="⭐"
         />
       </div>
@@ -200,15 +215,15 @@ export default function ProfilePage() {
           shadow-[0_20px_60px_rgba(15,23,42,0.08)]
         "
       >
-        {user.role === "reader" && (
+        {role === "reader" && (
           <ReaderProfileDetails user={user} />
         )}
 
-        {user.role === "writer" && (
+        {role === "writer" && (
           <WriterProfileDetails user={user} />
         )}
 
-        {user.role === "admin" && (
+        {role === "admin" && (
           <AdminProfileDetails user={user} />
         )}
       </motion.div>

@@ -14,9 +14,17 @@ import {
   EyeSlash,
   StarFill,
 } from "@gravity-ui/icons";
-import { signIn } from "@/lib/auth-client"; // Assuming your library uses signIn
+import { signIn } from "@/lib/auth-client";
 import { toast } from "react-toastify";
 import { useRouter, useSearchParams } from "next/navigation";
+
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+
+const DASHBOARD_MAP = {
+  admin: "/dashboard/admin",
+  writer: "/dashboard/writer",
+  reader: "/dashboard/reader",
+};
 
 export default function SignInPage() {
   const mouseX = useMotionValue(0);
@@ -97,12 +105,27 @@ export default function SignInPage() {
       const result = await signIn.email({
         email: form.email,
         password: form.password,
-        
       });
 
+      if (result?.error) {
+        throw new Error(result.error.message || "Invalid email or password");
+      }
+
+      // Fetch the user's actual role from the Express backend
+      let destination = redirectTo !== "/" ? redirectTo : null;
+      if (!destination) {
+        try {
+          const res = await fetch(`${BASE_URL}/api/users/${form.email}`);
+          const dbUser = res.ok ? await res.json() : null;
+          const role = dbUser?.role || "reader";
+          destination = DASHBOARD_MAP[role] || "/";
+        } catch {
+          destination = "/";
+        }
+      }
+
       toast.success("Welcome back! 👋");
-      router.push(redirectTo);
-      // Add redirection logic here if needed (e.g., router.push("/dashboard"))
+      router.push(destination);
     } catch (error) {
       toast.error(error.message || "Failed to sign in. Please try again.");
     } finally {

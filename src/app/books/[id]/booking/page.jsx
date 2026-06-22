@@ -1,4 +1,4 @@
-import { getUserSession } from "@/lib/core/session";
+import { getUserSession, getRoleFromDB } from "@/lib/core/session";
 import { redirect } from "next/navigation";
 import React from "react";
 
@@ -9,7 +9,11 @@ const BookingPage = async ({ params }) => {
   if (!user) {
     redirect(`/auth/signin?redirect=/books/${id}/booking`);
   }
-  if (user.role !== "reader") {
+
+  // Fetch real role from Express backend (source of truth)
+  const role = await getRoleFromDB(user.email);
+
+  if (role !== "reader") {
     return (
       <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
         <div className="text-center">

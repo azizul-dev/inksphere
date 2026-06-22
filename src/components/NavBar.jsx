@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   HouseFill,
   BookOpen,
@@ -12,14 +12,27 @@ import {
 import NavLink from "./NavLink";
 import { useSession, signOut } from "@/lib/auth-client";
 
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+
 function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { data: session, isPending } = useSession();
   const user = session?.user;
 
-  // role -> dashboard path map (fixed double-slash typo, no longer needed
-  // since JSX below already branches per-role, but kept here in case you
-  // want to use it elsewhere)
+  // Fetch real role from Express backend — better-auth admin() plugin
+  // blocks client-set roles, so session.user.role is always null.
+  const [dbRole, setDbRole] = useState(null);
+  useEffect(() => {
+    if (!user?.email) return;
+    fetch(`${BASE_URL}/api/users/${user.email}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((dbUser) => { if (dbUser?.role) setDbRole(dbUser.role); })
+      .catch(() => {});
+  }, [user?.email]);
+
+  const role = dbRole || user?.role || null;
+
+  // role -> dashboard path map
   const dashboardLinks = {
     writer: "/dashboard/writer",
     reader: "/dashboard/reader",
@@ -110,7 +123,7 @@ function NavBar() {
             {/* Dynamic links based on active user role */}
             {user && (
               <>
-                {user.role === "reader" && (
+                {role === "reader" && (
                   <li>
                     <Link
                       href={dashboardLinks.reader}
@@ -120,7 +133,7 @@ function NavBar() {
                     </Link>
                   </li>
                 )}
-                {user.role === "writer" && (
+                {role === "writer" && (
                   <li>
                     <Link
                       href={dashboardLinks.writer}
@@ -130,7 +143,7 @@ function NavBar() {
                     </Link>
                   </li>
                 )}
-                {user.role === "admin" && (
+                {role === "admin" && (
                   <li>
                     <Link
                       href={dashboardLinks.admin}
@@ -207,7 +220,7 @@ function NavBar() {
 
             {user && (
               <>
-                {user.role === "reader" && (
+                {role === "reader" && (
                   <li>
                     <Link
                       href={dashboardLinks.reader}
@@ -217,7 +230,7 @@ function NavBar() {
                     </Link>
                   </li>
                 )}
-                {user.role === "writer" && (
+                {role === "writer" && (
                   <li>
                     <Link
                       href={dashboardLinks.writer}
@@ -227,7 +240,7 @@ function NavBar() {
                     </Link>
                   </li>
                 )}
-                {user.role === "admin" && (
+                {role === "admin" && (
                   <li>
                     <Link
                       href={dashboardLinks.admin}

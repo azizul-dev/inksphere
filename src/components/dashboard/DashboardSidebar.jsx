@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
 
 import {
   LayoutSplitSideContentLeft,
@@ -19,96 +20,29 @@ import {
 import { Button, Drawer } from "@heroui/react";
 import { useSession } from "@/lib/auth-client";
 
-export function DashboardSidebar() {
-  const pathname = usePathname();
-  const { data: session, isPending } = useSession();
-  const user = session?.user;
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
-  const dashboardTitle =
-  user?.role === "admin"
-    ? "Admin Dashboard"
-    : user?.role === "writer"
-    ? "Writer Dashboard"
-    : "Reader Dashboard";
-
-
-  const adminNavLinks= [
-  {
-    icon: House, // Assuming a standard dashboard/home icon
-    label: "Dashboard",
-    href: "/dashboard/admin",
-  },
-  {
-    icon: PersonMagnifier, // Assuming a standard users/people icon
-    label: "Users",
-    href: "/dashboard/admin/users",
-  },
-  {
-    icon: Briefcase, // Or Book/Folder depending on your icon set for the briefcase-like icon
-    label: "Books",
-    href: "/dashboard/admin/books",
-  },
-  {
-    icon: CreditCard, // Assuming a standard payment/credit card icon
-    label: "Payments",
-    href: "/dashboard/admin/payments",
-  },
+const adminNavLinks = [
+  { icon: House, label: "Dashboard", href: "/dashboard/admin" },
+  { icon: PersonMagnifier, label: "Users", href: "/dashboard/admin/users" },
+  { icon: Briefcase, label: "Books", href: "/dashboard/admin/books" },
+  { icon: CreditCard, label: "Payments", href: "/dashboard/admin/payments" },
 ];
 
- const writerNavLink = [
-  {
-    icon: House,
-    label: "Dashboard",
-    href: "/dashboard/writer",
-  },
-  {
-    icon: House,
-    label: "Book",
-    href: "/dashboard/writer/manage",
-  },
-  {
-    icon: Bookmark,
-    label: "Bookmarked Books",
-    href: "/dashboard/bookmark",
-  },
-  {
-    icon: CirclePlus,
-    label: "Add a Book",
-    href: "/dashboard/writer/manage/new",
-  },
-  {
-    icon: Database,
-    label: "Sell",
-    href: "/dashboard/writer/sales-history",
-  },
-  {
-    icon: Person,
-    label: "Profile",
-    href: "/dashboard/profile", 
-  },
+const writerNavLink = [
+  { icon: House, label: "Dashboard", href: "/dashboard/writer" },
+  { icon: House, label: "Book", href: "/dashboard/writer/manage" },
+  { icon: Bookmark, label: "Bookmarked Books", href: "/dashboard/bookmark" },
+  { icon: CirclePlus, label: "Add a Book", href: "/dashboard/writer/manage/new" },
+  { icon: Database, label: "Sell", href: "/dashboard/writer/sales-history" },
+  { icon: Person, label: "Profile", href: "/dashboard/profile" },
 ];
 
 const readerNavLink = [
-  {
-    icon: House,
-    label: "Dashboard",
-    href: "/dashboard/reader",
-  },
-  {
-    icon: Magnifier,
-    label: "Purchased Books",
-    href: "/dashboard/reader/purchased-books", // ⬅️ changed: /dashboard/reader/purchased-books থেকে
-  },
-  {
-    icon: Bookmark,
-    label: "Bookmarked Books",
-    href: "/dashboard/bookmark", // ⬅️ changed: /dashboard/bookmark (already matched writer)
-  },
-  {
-    icon: Person,
-    label: "Profile",
-    href: "/dashboard/profile", // ⬅️ changed: /dashboard/reader/profile থেকে
-  },
+  { icon: House, label: "Dashboard", href: "/dashboard/reader" },
+  { icon: Magnifier, label: "Purchased Books", href: "/dashboard/reader/purchased-books" },
+  { icon: Bookmark, label: "Bookmarked Books", href: "/dashboard/bookmark" },
+  { icon: Person, label: "Profile", href: "/dashboard/profile" },
 ];
 
 const navLinksMap = {
@@ -117,12 +51,39 @@ const navLinksMap = {
   admin: adminNavLinks,
 };
 
+const dashboardTitleMap = {
+  admin: "Admin Dashboard",
+  writer: "Writer Dashboard",
+  reader: "Reader Dashboard",
+};
 
-  // While session is loading, or user isn't resolved yet, fall back to
-  // an empty list instead of crashing on `user.role`.
-  const navItems = isPending
-    ? []
-    : navLinksMap[user?.role || "reader"];
+export function DashboardSidebar() {
+  const pathname = usePathname();
+  const { data: session, isPending } = useSession();
+  const user = session?.user;
+
+  // better-auth's admin() plugin blocks role from being set by clients,
+  // so session.user.role is always null for new users. We fetch the
+  // real role from the Express backend — the single source of truth.
+  const [dbRole, setDbRole] = useState(null);
+
+  useEffect(() => {
+    if (!user?.email) return;
+    fetch(`${BASE_URL}/api/users/${user.email}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((dbUser) => {
+        if (dbUser?.role) setDbRole(dbUser.role);
+      })
+      .catch(() => {});
+  }, [user?.email]);
+
+  // Effective role: DB role → better-auth role → default "reader"
+  const role = dbRole || user?.role || "reader";
+
+  const dashboardTitle = dashboardTitleMap[role] || "Dashboard";
+
+  // Safety net: always an array so .map() never throws
+  const navItems = isPending ? [] : (navLinksMap[role] || []);
 
   const navContent = (
     <nav className="flex flex-col gap-2">
@@ -145,7 +106,6 @@ const navLinksMap = {
               font-medium
               transition-all
               duration-300
-
               ${
                 isActive
                   ? `
@@ -170,7 +130,6 @@ const navLinksMap = {
                 size-5
                 transition-all
                 duration-300
-
                 ${
                   isActive
                     ? "text-white"
@@ -189,18 +148,14 @@ const navLinksMap = {
   return (
     <>
       {/* Desktop Sidebar */}
-
       <aside className="hidden lg:flex lg:w-72 shrink-0 border-r border-slate-200 bg-white p-5 sticky top-0 h-screen">
         <div className="w-full">
           {/* Logo */}
-
           <div className="mb-8">
             <h2 className="text-2xl font-black bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 bg-clip-text text-transparent">
-              BookVerse
+              InkSphere
             </h2>
-            <p className="mt-1 text-sm text-slate-500">
-              {dashboardTitle}
-            </p>
+            <p className="mt-1 text-sm text-slate-500">{dashboardTitle}</p>
           </div>
 
           {navContent}
@@ -208,14 +163,12 @@ const navLinksMap = {
       </aside>
 
       {/* Mobile Drawer Button */}
-
       <div className="lg:hidden py-1">
         <Drawer>
           <Button
             className="
             min-w-0
             rounded-xl
-           
             shadow-lg
             border
             border-slate-200

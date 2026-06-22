@@ -1,12 +1,12 @@
 
-import { getAllBooksAdmin } from "@/lib/actions/book";
+ 
+import { getAllBooksAdmin } from "@/lib/api/books";
 import BooksTable from "./BooksTable";
 import { requireRole } from "@/lib/core/session";
 
 const AllBooksPage = async () => {
   await requireRole("admin");
-  const data = await getAllBooksAdmin();
-  const books = data.books || [];
+  const books = await getAllBooksAdmin(); // ✅ সরাসরি array
 
   return (
     <div className="p-4 md:p-6">

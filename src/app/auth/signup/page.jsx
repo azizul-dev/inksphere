@@ -17,6 +17,7 @@ import {
   StarFill,
 } from "@gravity-ui/icons";
 import { signUp } from "@/lib/auth-client";
+import { saveUser } from "@/lib/actions/user";
 import { toast } from "react-toastify";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -107,12 +108,30 @@ export default function SignUpPage() {
         email: form.email,
         password: form.password,
         name: form.name,
+      });
+
+      if (result?.error) {
+        throw new Error(result.error.message || "Failed to create account");
+      }
+
+      // Save user to custom Express backend DB with their chosen role
+      await saveUser({
+        name: form.name,
+        email: form.email,
         role,
       });
-      console.log("SIGNUP RESULT:", result);
 
       toast.success("🎉 Account created successfully!");
-      router.push(redirectTo);
+
+      // Redirect to the correct dashboard based on the selected role
+      const dashboardMap = {
+        admin: "/dashboard/admin",
+        writer: "/dashboard/writer",
+        reader: "/dashboard/reader",
+      };
+      const destination =
+        redirectTo !== "/" ? redirectTo : dashboardMap[role] || "/";
+      router.push(destination);
 
       setForm({
         name: "",
@@ -237,7 +256,8 @@ export default function SignUpPage() {
             <div className="flex flex-col gap-4">
               <Label>Subscription plan</Label>
               <RadioGroup
-              onChange={value => setRole(value)}
+                value={role}
+                onChange={setRole}
                 defaultValue="reader"
                 name="role"
                 orientation="horizontal"
