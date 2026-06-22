@@ -1,3 +1,5 @@
+"use server";
+
 import { protectedFetch } from "../core/server";
 
 // কিনেছে কিনা check

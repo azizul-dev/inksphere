@@ -1,3 +1,5 @@
+"use server";
+
 import { protectedFetch, serverFetch, serverMutation } from "../core/server";
 
 // Public — login ছাড়াও browse করা যাবে

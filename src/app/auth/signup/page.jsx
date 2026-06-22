@@ -1,12 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import Link from "next/link";
 import { Button } from "@heroui/react";
 import { useMotionValue, useTransform } from "framer-motion";
 import { useSpring } from "framer-motion";
-import { Description, Label, Radio, RadioGroup } from "@heroui/react";
+import { Label, Radio, RadioGroup } from "@heroui/react";
 
 import {
   Person,
@@ -16,12 +16,12 @@ import {
   EyeSlash,
   StarFill,
 } from "@gravity-ui/icons";
-import { signUp } from "@/lib/auth-client";
+import { authClient, signUp } from "@/lib/auth-client";
 import { saveUser } from "@/lib/actions/user";
 import { toast } from "react-toastify";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function SignUpPage() {
+function SignUpForm() {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
@@ -60,11 +60,11 @@ export default function SignUpPage() {
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const [role, setRole] = useState('reader')
+  const [role, setRole] = useState("reader");
   const router = useRouter();
 
   const searchParams = useSearchParams();
-    const redirectTo = searchParams.get('redirect') || '/';
+  const redirectTo = searchParams.get("redirect") || "/";
 
   const validate = () => {
     const newErrors = {};
@@ -143,6 +143,17 @@ export default function SignUpPage() {
       toast.error(error.message || "Failed to create account");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSignup = async () => {
+    try {
+      await authClient.signIn.social({
+        provider: "google",
+        callbackURL: redirectTo || "/",
+      });
+    } catch (error) {
+      toast.error(error.message || "Failed to sign up with Google");
     }
   };
 
@@ -381,7 +392,10 @@ export default function SignUpPage() {
           </div>
 
           {/* Google */}
-          <button className="w-full flex items-center justify-center gap-2 border border-gray-200 rounded-xl py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition">
+          <button
+            onClick={handleGoogleSignup}
+            className=" cursor-pointer w-full flex items-center justify-center gap-2 border border-gray-200 rounded-xl py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
+          >
             {/* <LogoGoogle className="w-4 h-4" /> */}
             Continue with Google
           </button>
@@ -399,5 +413,13 @@ export default function SignUpPage() {
         </motion.div>
       </main>
     </div>
+  );
+}
+
+export default function SignUpPage() {
+  return (
+    <Suspense fallback={<div className="flex-1 flex items-center justify-center min-h-screen text-slate-500">Loading...</div>}>
+      <SignUpForm />
+    </Suspense>
   );
 }

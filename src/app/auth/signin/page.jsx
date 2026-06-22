@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import Link from "next/link";
 import { Button } from "@heroui/react";
 import { useMotionValue, useTransform } from "framer-motion";
@@ -26,7 +26,7 @@ const DASHBOARD_MAP = {
   reader: "/dashboard/reader",
 };
 
-export default function SignInPage() {
+function SignInForm() {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const router = useRouter();
@@ -130,6 +130,17 @@ export default function SignInPage() {
       toast.error(error.message || "Failed to sign in. Please try again.");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      await signIn.social({
+        provider: "google",
+        callbackURL: redirectTo || "/",
+      });
+    } catch (error) {
+      toast.error(error.message || "Failed to sign in with Google");
     }
   };
 
@@ -279,7 +290,10 @@ export default function SignInPage() {
           </div>
 
           {/* Google */}
-          <button className="w-full flex items-center justify-center gap-2 border border-gray-200 rounded-xl py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition">
+          <button
+            onClick={handleGoogleSignIn}
+            className="cursor-pointer w-full flex items-center justify-center gap-2 border border-gray-200 rounded-xl py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
+          >
             Continue with Google
           </button>
 
@@ -296,5 +310,13 @@ export default function SignInPage() {
         </motion.div>
       </main>
     </div>
+  );
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense fallback={<div className="flex-1 flex items-center justify-center min-h-screen text-slate-500">Loading...</div>}>
+      <SignInForm />
+    </Suspense>
   );
 }
