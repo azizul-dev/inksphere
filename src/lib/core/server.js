@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
 import { getUserToken } from "./session";
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+const rawBaseUrl = process.env.NEXT_PUBLIC_BASE_URL || "";
+const baseUrl = rawBaseUrl.endsWith("/") ? rawBaseUrl.slice(0, -1) : rawBaseUrl;
 
 export const authHeader = async () => {
   const token = await getUserToken();
