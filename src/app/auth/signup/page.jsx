@@ -123,7 +123,7 @@ function SignUpForm() {
 
       toast.success("🎉 Account created successfully!");
 
-      // Redirect to the correct dashboard based on the selected role
+ 
       const dashboardMap = {
         admin: "/dashboard/admin",
         writer: "/dashboard/writer",
