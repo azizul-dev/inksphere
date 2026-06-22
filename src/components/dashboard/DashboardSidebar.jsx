@@ -36,7 +36,7 @@ export function DashboardSidebar() {
   {
     icon: House, // Assuming a standard dashboard/home icon
     label: "Dashboard",
-    href: "/admin/dashboard",
+    href: "/dashboard/admin",
   },
   {
     icon: PersonMagnifier, // Assuming a standard users/people icon

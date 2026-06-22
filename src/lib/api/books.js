@@ -31,7 +31,14 @@ export const getPublishedBooks = async (searchParams = {}) => {
   const res = await fetch(`${baseUrl}/api/books?${params.toString()}`, {
     cache: "no-store",
   });
-  return res.json(); // { books, totalCount, totalPages, currentPage }
+  return res.json(); 
+};
+
+export const getAllBooksAdmin = async () => {
+  const res = await fetch(`${baseUrl}/api/books?limit=1000`, {
+    cache: "no-store",
+  });
+  return res.json();
 };
 
 

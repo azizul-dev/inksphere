@@ -45,3 +45,13 @@ export const getUserById = async (id) => {
   });
   return res.json();
 };
+
+
+export const toggleUserBan = async (id, banned) => {
+  const res = await fetch(`${baseUrl}/api/users/${id}/ban`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ banned }),
+  });
+  return res.json();
+};
