@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { getUserToken } from "./session";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
@@ -11,11 +12,11 @@ export const authHeader = async () => {
 export const serverFetch = async (path) => {
   const res = await fetch(`${baseUrl}${path}`, {
     headers: {
-      ...(await authHeader()), 
+      ...(await authHeader()),
     },
     cache: "no-store",
-  }); 
-  return res.json();
+  });
+  return handleStatus(res);
 };
 
 export const protectedFetch = async (path) => {
@@ -27,7 +28,7 @@ export const protectedFetch = async (path) => {
     },
   );
 
-  return res.json();
+  return handleStatus(res);
 };
 
 export const serverMutation = async (path, data, method = "POST") => {
@@ -39,5 +40,15 @@ export const serverMutation = async (path, data, method = "POST") => {
     },
     ...(data !== null && { body: JSON.stringify(data) }), // ← null check যোগ হলো
   });
+
+  return handleStatus(res);
+};
+
+const handleStatus = (res) => {
+  if (res.status === 401) {
+    redirect("/unauthorized");
+  } else if (res.status === 403) {
+    redirect("/unauthorized");
+  }
   return res.json();
 };
