@@ -1,49 +1,25 @@
 "use server";
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+import { serverFetch, serverMutation } from "../core/server";
+
+
+
 export const createNewBook = async (newBookData) => {
-  const res = await fetch(`${baseUrl}/api/books`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(newBookData),
-  });
-  return res.json();
+  return await serverMutation("/api/books", newBookData);
 };
 
 export const deleteBook = async (id) => {
-  const res = await fetch(`${baseUrl}/api/books/${id}`, {
-    method: "DELETE",
-  });
-
-  return res.json();
+  return await serverMutation(`/api/books/${id}`, null, "DELETE");
 };
 
 export const updateBook = async (id, bookData) => {
-  const res = await fetch(`${baseUrl}/api/books/${id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(bookData),
-  });
-
-  return res.json();
+  return await serverMutation(`/api/books/${id}`, bookData, "PUT");
 };
 
 export const getAllBooksAdmin = async () => {
-  const res = await fetch(`${baseUrl}/api/books?limit=1000`, {
-    cache: "no-store",
-  });
-  return res.json();
+  return await serverFetch("/api/books?limit=1000");
 };
 
 export const toggleBookStatus = async (id, status) => {
-  const res = await fetch(`${baseUrl}/api/books/${id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ status }),
-  });
-  return res.json();
+  return await serverMutation(`/api/books/${id}`, { status }, "PUT");
 };

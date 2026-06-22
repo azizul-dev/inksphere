@@ -1,44 +1,25 @@
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+import { protectedFetch, serverFetch, serverMutation } from "../core/server";
+
 
 export const getWriterBooks = async (writerId) => {
-  const res = await fetch(`${baseUrl}/api/books?writerId=${writerId}`);
-  const data = await res.json();
-  return data.books; // array বের করে আনা
+  const data = await serverFetch(`/api/books?writerId=${writerId}`);
+  return data.books;
 };
 
 export const getSingleBook = async (id) => {
-  const res = await fetch(`${baseUrl}/api/books/${id}`);
-  return res.json();
+  return await protectedFetch(`/api/books/${id}`);
 };
 
 export const getBooksByIds = async (ids) => {
   if (!ids || ids.length === 0) return [];
-  const res = await fetch(`${baseUrl}/api/books/by-ids`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ ids }),
-    cache: "no-store",
-  });
-  return res.json();
+  return await serverMutation("/api/books/by-ids", { ids });
 };
 
 export const getPublishedBooks = async (searchParams = {}) => {
-  const params = new URLSearchParams({
-    status: "published",
-    ...searchParams,
-  });
-
-  const res = await fetch(`${baseUrl}/api/books?${params.toString()}`, {
-    cache: "no-store",
-  });
-  return res.json(); 
+  const params = new URLSearchParams({ status: "published", ...searchParams });
+  return await serverFetch(`/api/books?${params.toString()}`);
 };
 
 export const getAllBooksAdmin = async () => {
-  const res = await fetch(`${baseUrl}/api/books?limit=1000`, {
-    cache: "no-store",
-  });
-  return res.json();
+  return await serverFetch("/api/books?limit=1000");
 };
-
-

@@ -1,20 +1,17 @@
 "use server";
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+import { serverMutation } from "../core/server";
+
+
 
 export const addBookmark = async (userId, bookId) => {
-  const res = await fetch(`${baseUrl}/api/bookmarks`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ userId, bookId }),
-  });
-  return res.json();
+  return await serverMutation("/api/bookmarks", { userId, bookId });
 };
 
 export const removeBookmark = async (userId, bookId) => {
-  const res = await fetch(
-    `${baseUrl}/api/bookmarks?userId=${userId}&bookId=${bookId}`,
-    { method: "DELETE" }
+  return await serverMutation(
+    `/api/bookmarks?userId=${userId}&bookId=${bookId}`,
+    null,
+    "DELETE"
   );
-  return res.json();
 };

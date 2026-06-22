@@ -1,57 +1,35 @@
 "use server";
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+import { serverFetch, serverMutation } from "../core/server";
+
+
 
 export const getAllUsers = async () => {
-  const res = await fetch(`${baseUrl}/api/users`, { cache: "no-store" });
-  return res.json();
+  return await serverFetch("/api/users");
 };
 
 export const saveUser = async (userData) => {
-  const res = await fetch(`${baseUrl}/api/users`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(userData),
-  });
-  return res.json();
+  return await serverMutation("/api/users", userData);
 };
 
 export const getUserByEmail = async (email) => {
   if (!email) return null;
-  const res = await fetch(`${baseUrl}/api/users/${email}`, { cache: "no-store" });
-  return res.json();
+  return await serverFetch(`/api/users/${email}`);
 };
 
 export const updateUserRole = async (id, role) => {
-  const res = await fetch(`${baseUrl}/api/users/role/${id}`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ role }),
-  });
-  return res.json();
+  return await serverMutation(`/api/users/role/${id}`, { role }, "PATCH");
 };
 
 export const deleteUser = async (id) => {
-  const res = await fetch(`${baseUrl}/api/users/${id}`, {
-    method: "DELETE",
-  });
-  return res.json();
+  return await serverMutation(`/api/users/${id}`, null, "DELETE");
 };
 
 export const getUserById = async (id) => {
   if (!id) return null;
-  const res = await fetch(`${baseUrl}/api/users/by-id/${id}`, {
-    cache: "no-store",
-  });
-  return res.json();
+  return await serverFetch(`/api/users/by-id/${id}`);
 };
 
-
 export const toggleUserBan = async (id, banned) => {
-  const res = await fetch(`${baseUrl}/api/users/${id}/ban`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ banned }),
-  });
-  return res.json();
+  return await serverMutation(`/api/users/${id}/ban`, { banned }, "PATCH");
 };
