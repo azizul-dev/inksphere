@@ -156,9 +156,9 @@ function NavBar() {
               </>
             )}
             <li>
-              {/* <NavLink href="/pricing">
+              <NavLink href="/pricing">
                 <CircleDollar width={20} height={20} />
-              </NavLink> */}
+              </NavLink>
             </li>
           </ul>
 
