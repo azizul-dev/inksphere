@@ -129,7 +129,7 @@ function NavBar() {
                       href={dashboardLinks.reader}
                       className="hover:text-white transition-colors"
                     >
-                      Dashboard
+                     Reader Studio
                     </Link>
                   </li>
                 )}
@@ -156,9 +156,9 @@ function NavBar() {
               </>
             )}
             <li>
-              <NavLink href="/pricing">
+              {/* <NavLink href="/pricing">
                 <CircleDollar width={20} height={20} />
-              </NavLink>
+              </NavLink> */}
             </li>
           </ul>
 
@@ -226,7 +226,7 @@ function NavBar() {
                       href={dashboardLinks.reader}
                       className="block py-2 hover:text-white"
                     >
-                      Dashboard
+                      Reader Studio
                     </Link>
                   </li>
                 )}

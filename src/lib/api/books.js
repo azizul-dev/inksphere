@@ -30,3 +30,19 @@ export const getAllBooksAdmin = async () => {
   const data = await protectedFetch("/api/books?limit=1000");
   return data?.books || [];
 };
+
+// Home page — Featured Ebooks (latest 6 published)
+export const getFeaturedBooks = async () => {
+  const params = new URLSearchParams({
+    status: "published",
+    limit: 6,
+    sort: "newest",
+  });
+  const data = await serverFetch(`/api/books?${params.toString()}`);
+  return data?.books || [];
+};
+
+// Home page — Top Writers (most sales)
+export const getTopWriters = async () => {
+  return await serverFetch("/api/writers/top");
+};

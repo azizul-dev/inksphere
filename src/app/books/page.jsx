@@ -1,12 +1,13 @@
 import { getPublishedBooks } from "@/lib/api/books";
 import EbookCard from "@/components/books/EbookCard";
 import FilterBar from "@/components/books/FilterBar";
+import PaginationControls from "@/components/books/PaginationControls";
 
 const BrowseEbooksPage = async ({ searchParams }) => {
   const params = await searchParams;
 
   const { books, totalCount, totalPages, currentPage } =
-    await getPublishedBooks(params);
+    await getPublishedBooks({ ...params, limit: 12 });
 
   return (
     <div className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6 lg:px-8 xl:px-10">
@@ -32,7 +33,15 @@ const BrowseEbooksPage = async ({ searchParams }) => {
           </p>
         )}
 
-        {/* পরের ধাপে Pagination বসাবো */}
+        {/* Pagination */}
+        <div className="mt-10">
+          <PaginationControls
+            totalPages={totalPages}
+            currentPage={currentPage}
+            totalCount={totalCount}
+            limit={12}
+          />
+        </div>
       </div>
     </div>
   );
